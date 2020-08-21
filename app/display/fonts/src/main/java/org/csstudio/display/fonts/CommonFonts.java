@@ -26,18 +26,8 @@ public class CommonFonts
 {
     private final static String[] fonts = new String[]
     {
-        "LiberationMono-Regular.ttf",
-        "LiberationSerif-Bold.ttf",
-        "LiberationSans-Bold.ttf",
-        "LiberationSerif-BoldItalic.ttf",
-        "LiberationMono-Bold.ttf",
-        "LiberationSans-BoldItalic.ttf",
-        "LiberationSerif-Italic.ttf",
-        "LiberationMono-BoldItalic.ttf",
-        "LiberationSans-Italic.ttf",
-        "LiberationSerif-Regular.ttf",
-        "LiberationMono-Italic.ttf",
-        "LiberationSans-Regular.ttf"
+        "SourceHanSans-Bold.ttf",
+		"SourceHanSans-Regular.ttf"
     };
 
     /** Install common fonts */
