@@ -113,6 +113,10 @@
     <y>345</y>
     <width use_class="true">100</width>
     <height use_class="true">30</height>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
     <foreground_color use_class="true">
       <color name="Text" red="5" green="5" blue="5">
       </color>
