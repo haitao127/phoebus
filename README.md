@@ -1,6 +1,6 @@
 # phoebus
 
-[![Travis Status](https://travis-ci.org/ControlSystemStudio/phoebus.svg?branch=master)](https://travis-ci.org/ControlSystemStudio/phoebus) [![Appveyor Status](https://ci.appveyor.com/api/projects/status/kwktt0vf955aged1/branch/master?svg=true)](https://ci.appveyor.com/project/mattclarke/phoebus-o58ne/branch/master)
+[![Travis Status](https://travis-ci.com/haitao127/phoebus.svg?branch=master)](https://travis-ci.com/haitao127/phoebus)
 
 Phoebus 是一个框架和一系列工具，用于监视和操作大型控制系统，例如加速器社区中的系统。 Phoebus 是 Control System Studio 工具集的更新，它删除了对 Eclipse RCP 和 SWT 的依赖。
 
