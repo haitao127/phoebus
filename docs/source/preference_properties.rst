@@ -283,6 +283,33 @@ File ../..\app\databrowser\target\classes\archive_reader_rdb_preferences.propert
    fetch_size=1000
 
 
+channel.views.ui
+----------------
+
+File ../..\app\channel\views\target\classes\cv_preferences.properties::
+
+   # --------------------------------------
+   # Package org.phoebus.channel.views.ui
+   # --------------------------------------
+   
+   # Show the active PVs only
+   show_active_cb=false
+
+
+channelfinder
+-------------
+
+File ../..\app\channel\channelfinder\target\classes\channelfinder_preferences.properties::
+
+   # ----------------------------------------
+   # Package org.phoebus.channelfinder
+   # ----------------------------------------
+   
+   serviceURL=http://localhost:8080/ChannelFinder
+   username=admin
+   password=adminPass
+
+
 console
 -------
 
@@ -933,7 +960,7 @@ File ../..\app\pvtree\target\classes\pv_tree_preferences.properties::
 saveandrestore
 --------------
 
-File ../..\app\save-and-restore\ui\src\main\resources\save_and_restore_preferences.properties::
+File ../..\app\save-and-restore\ui\target\classes\save_and_restore_preferences.properties::
 
    # -----------------------------------------------
    # Package org.phoebus.applications.saveandrestore
@@ -1229,7 +1256,8 @@ File ../..\core\ui\target\classes\phoebus_ui_preferences.properties::
    # Show user ID in status bar?
    status_show_user=true
    
-   
+   # Set default save path
+   default_save_path=
    
 
 

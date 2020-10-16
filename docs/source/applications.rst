@@ -11,6 +11,7 @@ The following sections describe details of specific application features.
    core/pv/doc/index
    core/ui/doc/index
    app/3d-viewer/doc/index
+   app/alarm/datasource/doc/index
    app/alarm/logging-ui/doc/index
    app/alarm/ui/doc/index
    app/channel/views/doc/index

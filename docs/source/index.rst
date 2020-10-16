@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to the CS-Studio/Phoebus Documentation!
+欢迎访问 CS-Studio/Phoebus 使用手册！
 ===============================================
 
 .. image:: splash.png
