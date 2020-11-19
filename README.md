@@ -1,34 +1,29 @@
-# phoebus 
-[![Travis Status](https://travis-ci.org/ControlSystemStudio/phoebus.svg?branch=master)](https://travis-ci.org/ControlSystemStudio/phoebus)
-[![Appveyor Status](https://ci.appveyor.com/api/projects/status/kwktt0vf955aged1/branch/master?svg=true)](https://ci.appveyor.com/project/mattclarke/phoebus-o58ne/branch/master)
+# phoebus
 
-Phoebus is a framework and a collections of tools to monitor and operate large scale control systems, such as the ones in the accelerator community. Phoebus is an update of the Control System Studio toolset that removes dependencies on Eclipse RCP and SWT.
+[![Build Status](https://travis-ci.com/haitao127/phoebus.svg?branch=master)](https://travis-ci.com/haitao127/phoebus)
 
-More information:
-https://control-system-studio.readthedocs.io
+Phoebus 是一个框架和一系列工具，用于监视和操作大型控制系统，例如加速器社区中的系统。 Phoebus 是 Control System Studio 工具集的更新，它删除了对 Eclipse RCP 和 SWT 的依赖。
 
+详细信息：[https://phoebus-impics.readthedocs.io](https://phoebus-impics.readthedocs.io)
 
-## Requirements
- - [JDK11 or later, suggested is OpenJDK](http://jdk.java.net/12).
- - [maven 2.x](https://maven.apache.org/) or [ant](http://ant.apache.org/)
+## 要求
 
+-   [JDK11 或更高版本，建议使用 OpenJDK](http://jdk.java.net/12) 。
+-   [Maven 2.x](https://maven.apache.org/) 或 [ant](http://ant.apache.org/)
 
-## Target Platform
+## 目标平台
 
-All external dependencies are expected in `dependencies/target/lib`.
-They could be obtained by expanding a zip-ed phoebus target from an existing build setup, or via one initial maven run:
-
+所有外部依赖项都应在 `dependencies/target/lib` 。可以通过从现有的构建设置扩展一个压缩的 Phoebus 目标来获得，也可以通过一个初步的 Maven 运行来获得它们：
 
 ```
 mvn clean verify -f dependencies/pom.xml
 ```
 
+## 用 Maven 构建
 
-## Building with maven
+### 快速入门（构建和运行）
 
-### Quickstart (Build & run)  
-
-To build and run the phoebus product  
+生成并运行 Phoebus 产品
 
 ```
 mvn clean install
@@ -36,223 +31,193 @@ cd phoebus-product
 mvn exec:java
 ```
 
-### Building  
+### 构建
 
-To build the entire phoebus stack
+构建整个 phoebus 堆栈
 
 ```
 mvn clean install
 ```
 
-### Unit Tests
+### 单元测试
 
-Some unit tests may be sensitive to localization
-and fail when executed in a previously untested locale.
-Set the environment variable `LANG` to `en_US.UTF-8`
-to execute tests in a specific locale,
-or build with `mvn -DskipTests ...` to skip tests.
+某些单元测试可能对本地化敏感，并且在以前未经测试的语言环境中执行时会失败。将环境变量 `LANG` 设置为 `en_US.UTF-8` 以在特定的语言环境中执行测试，或使用 `mvn -DskipTests ...` 进行构建以跳过测试。
 
-### Running the phoebus application  
+### 运行 Phoebus 应用程序
 
-To run with maven
+与 Maven 一起运行
+
 ```
 cd phoebus-product
 mvn exec:java
 ```
-To run the product jar
+
+运行产品罐
+
 ```
 cd phoebus-product/target
 java -jar product-*-SNAPSHOT.jar
 ```
 
-
-
-## Building with ant
+## 用 ant 构建
 
 ```
 ant clean run
 ```
 
+## 使用 Eclipse 开发
 
-## Developing with Eclipse
+从 [http://download.eclipse.org/eclipse/downloads/](http://download.eclipse.org/eclipse/downloads/) 下载 Eclipse Oxygen 4.7.1a 或更高版本
 
-Download Eclipse Oxygen 4.7.1a or later from http://download.eclipse.org/eclipse/downloads/
+像这样启动 Eclipse：
 
-Start Eclipse like this:
+```
+export JAVA_HOME=/path/to/your/jdk-9-or-later
+export PATH="$JAVA_HOME/bin:$PATH"
+eclipse/eclipse -consoleLog
+```
 
-    export JAVA_HOME=/path/to/your/jdk-9-or-later
-    export PATH="$JAVA_HOME/bin:$PATH"
-    eclipse/eclipse -consoleLog
+检查 Eclipse 首选项：
 
-Check Eclipse Preferences:
+-   Java，已安装的 JRE：默认为 JDK 9 或更高版本
+-   Java，编译器：“JDK 符合性” 应为 “9” 或更高
 
- * Java, Installed JREs: JDK 9-or-later should be the default
- * Java, Compiler: JDK Compliance should be "9" or higher
+### 使用纯 Java 配置
 
+`Existing Projects into Workspace` 使用 `File` ， `Import` ， `General` ， `Existing Projects into Workspace` 。选择 phoebus 根目录，然后选中 “搜索嵌套项目” 选项。
 
-### Use plain Java configuration
+默认情况下，应选择所有项目（“依赖项”，“核心框架”，..，“产品”）。
 
-Use `File`, `Import`, `General`, `Existing Projects into Workspace`.
-Select the phoebus root directory, and check the option to "Search for nested projects".
+需要编辑文件 `dependencies/phoebus-target/.classpath` 列出所有 `phoebus-target/target/lib/javafx*.jar` 文件。
 
-By default, all projects should be selected ('dependencies', 'core-framework', .., 'product').
+在包资源管理器中，选择 `product` 项目。从菜单中调用 `Run` ， `Run Configurations...` 在启动配置对话框中，选择 `Java Application` ，然后按 `New Configuration` 。请注意，该项目应预先设置为 `product` ，并且 Dependencies 选项卡应列出该产品的所有项目依赖项，即所有 `core-*` 和 `app-*` 项目。对于 Main 类，输入 `org.phoebus.product.Launcher` ，按 `Apply` ，然后按 `Run` 。
 
-The file `dependencies/phoebus-target/.classpath`
-needs to be edited to list all the `phoebus-target/target/lib/javafx*.jar` files.
+### 在 Eclipse 中使用 Maven 文件
 
-In the Package Explorer, select the `product` project.
-Invoke `Run`, `Run Configurations...` from the menu.
-In the launch configuration dialog, select `Java Application` and press `New Configuration`.
-Note that the project should be pre-set to `product`, and the Dependencies tab should list all the project dependencies of the product,
-i.e. all the `core-*` and `app-*` projects.
-For a Main class, enter `org.phoebus.product.Launcher`, press `Apply` and then `Run`.
+在 “帮助 / Eclipse 市场” 中，搜索 “Maven Integration for Eclipse Luna 或更高版本”。
 
+使用文件 / 导入 / Maven / 现有 Maven 项目导入 Phoebus 源代码。
 
-### Use Maven Files in Eclipse
+可能存在编译器错误，因为程序包资源管理器中的 “JRE 系统库” 显示为 “\[J2SE-1.4\]”。右键单击受影响的项目（greeting-app，探针），“构建路径”，“配置构建路径”，“库”，“编辑 JRE 系统库” 以使用工作区默认值（jdk-9）。重新启动 Eclipse IDE。
 
-In Help/Eclipse Marketplace, search for Maven Integration for Eclipse Luna or newer
+现在可以启动 product /src/main /java/org.phoebus.product/ Launcher.java。
 
-Use File/Import/Maven/Existing Maven Projects to import the phoebus source code.
+## 使用 Intellij IDEA 开发
 
-There can be a compiler error because the "JRE System Library" in the Package Explorer shows "[J2SE-1.4]".
-Right click on the affected projects (greeting-app, probe), Build Path, Configure Build Path, Libraries, Edit the JRE System Library to use the Workspace default (jdk-9).
-Restart Eclipse IDE.
+首先，如上所述下载目标平台。
 
-Can now start product/src/main/java/org.phoebus.product/Launcher.java.
+导入项目：
 
+-   启动 Intellij
+-   导入项目
+-   选择 Phoebus 目录
+-   从外部模型导入项目：Maven
+-   接受默认选项，然后单击两次下一步。
+-   确保 JDK 是版本 9 或更高版本
+-   将项目名称更改为 Phoebus 并单击完成
 
-## Developing with Intellij IDEA
+要运行 Phoebus 应用程序：
 
-First, download the target platform as described above.
+-   运行编辑配置...
+-   选择 + | 应用
+-   搜索主类并键入 Launcher
+-   使用模块的类路径：选择产品
+-   将名称设置为 Phoebus
+-   点击确定
+-   在 IDE 的右上角，单击绿色的播放按钮
 
-To import the project:
+## 使用 NetBeans 开发
 
-* Start Intellij
-* Import Project
-* Select the Phoebus directory
-* Import project from external model: Maven
-* Accept the default options and click Next twice
-* Ensure that the JDK is version 9 or above
-* Change the project name to Phoebus and click finish
+首先下载 [NetBeans 9](https://netbeans.apache.org/download/nb90/nb90.html) ，然后如上所述下载目标平台。运行 NetBeans 之后，选择 “ **工具** ➜Java **平台”** ，并确保将 Java 9 或 10 平台设置为默认平台。
 
-To run the Phoebus application:
+要打开 Maven 项目，请选择 **File** **…Open Project…，** 然后选择 *phoebus* 根项目文件夹。
 
-* Run | Edit Configurations...
-* Select + | Application
-* Search for main class and type Launcher
-* Use classpath of module: select product
-* Set the name to Phoebus
-* Click OK
-* In the top right of the IDE, click the green play button
+在 “ **项目”** 视图上，右键单击 “*phoebus（父级）”* 节点，然后选择 “ **清理并构建”** 菜单项。要在没有单元测试的情况下进行构建，请右键单击 *phoebus（父级）* 节点，然后选择 **“运行** *Maven➜* **跳过测试”** 。
 
+要运行 Phoebus 应用程序：
 
-## Developing with NetBeans
+-   打开 *phoebus（父级）* 项目和 “ *模块”* 节点，然后双击 *产品* 模块。
+-   现在，右键单击打开的 *产品* 项目，然后选择 *“运行”* ；
+-   将打开一个对话框，选择要运行的主类。验证是否已选择 `org.phoebus.product.Launcher` ，然后按 *Select Main Class* 按钮以启动应用程序。
+-   您还可以选择 *“永久记住”，* 以允许 NetBeans 记住所选的类。
+-   右键单击 *产品* 项目，还可以选择 *Set as Main Project* 。这样，只需按 *F6* 键，“ *运行主要项目”* 工具栏按钮或 “ *运行* ➜ *运行主要项目”* 菜单项即可启动 Phoebus 应用程序。
 
-First download [NetBeans 9](https://netbeans.apache.org/download/nb90/nb90.html),
-then the target platform as described above. After running NetBeans, select
-**Tools** ➜ **Java Platforms** and make sure that a Java 9 or 10 platform is set as
-the default one.
+## 完整的分发，包括手动和自动更新
 
-To open the Maven project Select the **File** ➜ **Open Project…** and select the
-*phoebus* root project folder.
+```
+# Obtain sources
+git clone https://github.com/ControlSystemStudio/phoebus.git
 
-On the **Projects** view right-click on the *phoebus (parent)* node and select the
-**Clean and Build** menu item. To build without the unit test, right-click the
-*phoebus (parent)* node and select **Run Maven** ➜ **Skip Tests**.
+# Build the Javadoc, i.e. html files to be included in the manual
+( cd phoebus/app/display/editor; ant -f javadoc.xml clean all )
 
-To run the Phoebus application:
+# Building the manual will locate and include
+# all ../phoebus/**/doc/index.rst and ../phoebus/**/doc/html
+( cd phoebus/docs; make clean html )
+# Windows: Use make.bat html
 
- * Open the *phoebus (parent)* project and the *Modules* node, then double-click on
-   the  *product* module;
- * Now right-click on the opened *product* project and select *Run*;
- * A dialog will open to select the main class to be run. Verify that
-   `org.phoebus.product.Launcher` is selected and press the *Select Main Class*
-   button to start the application.
- * You can also select *Remember Permanently* to allow NetBeans remembering the
-   chosen class.
- * Right-clicking the *product* project it is also possible to select
-   *Set as Main Project*. In this way the Phoebus application can be started just
-   pressing the *F6* key, the *Run Main Project* toolbar button, or the
-   *Run* ➜ *Run Main Project* menu item.
+# Build Product
 
+# Fetch dependencies
+( cd phoebus; mvn clean verify -f dependencies/pom.xml )
 
-## Complete Distribution, including manual and self-update
+# Create settings.ini for the product with current date
+# and URL of your update site.
+# Update site contains '$(arch)' which client will replace with
+# its host OS (linux, mac, win).
+# Note that this example replaces an existing product/settings.ini.
+# If your product already contains settings.ini,
+# consider using '>>' to append instead of replacing.
+URL='https://controlssoftware.sns.ornl.gov/css_phoebus/nightly/phoebus-$(arch).zip'
+( cd phoebus;
+  app/update/mk_update_settings.sh $URL > phoebus-product/settings.ini
+)
 
-    # Obtain sources
-    git clone https://github.com/ControlSystemStudio/phoebus.git
+# Build product & bundle for distribution, including the documentation
+( cd phoebus; ant clean dist )
 
-    # Build the Javadoc, i.e. html files to be included in the manual
-    ( cd phoebus/app/display/editor; ant -f javadoc.xml clean all )
+# The files phoebus/phoebus-product/target/*.zip and
+# services/*/target/*.zip can now be distributed,
+# unzipped, launched
+```
 
-    # Building the manual will locate and include
-    # all ../phoebus/**/doc/index.rst and ../phoebus/**/doc/html
-    ( cd phoebus/docs; make clean html )
-    # Windows: Use make.bat html
+请注意，phoebus-product 取决于平台，您会根据构建平台获得 `phoebus-0.0.1-linux.zip` ， `phoebus-0.0.1-mac.zip` 或 `phoebus-0.0.1-win.zip` 。
 
-    # Build Product
+## 跨平台构建
 
-    # Fetch dependencies
-    ( cd phoebus; mvn clean verify -f dependencies/pom.xml )
+`dependencies` 包括与平台相关的 JavaFX 库，其针对 Linux，Mac 和 Windows 的内容不同。如上所述进行构建时，结果将是构建平台的可执行文件。要为其他平台进行构建，请通过以下方式之一创建 `dependencies` ：
 
-    # Create settings.ini for the product with current date
-    # and URL of your update site.
-    # Update site contains '$(arch)' which client will replace with
-    # its host OS (linux, mac, win).
-    # Note that this example replaces an existing product/settings.ini.
-    # If your product already contains settings.ini,
-    # consider using '>>' to append instead of replacing.
-    URL='https://controlssoftware.sns.ornl.gov/css_phoebus/nightly/phoebus-$(arch).zip'
-    ( cd phoebus;
-      app/update/mk_update_settings.sh $URL > phoebus-product/settings.ini
-    )
+```
+# Either create the build platform for Linux..
+( cd phoebus; mvn clean verify  -Djavafx.platform=linux  -f dependencies/pom.xml )
 
-    # Build product & bundle for distribution, including the documentation
-    ( cd phoebus; ant clean dist )
+# or Mac OS X ..
+( cd phoebus; mvn clean verify  -Djavafx.platform=mac    -f dependencies/pom.xml )
 
-    # The files phoebus/phoebus-product/target/*.zip and
-    # services/*/target/*.zip can now be distributed,
-    # unzipped, launched
+# or Windows:
+( cd phoebus; mvn clean verify  -Djavafx.platform=win    -f dependencies/pom.xml )
+```
 
-Note that the phoebus-product is platform dependent, you get a
-`phoebus-0.0.1-linux.zip`, `phoebus-0.0.1-mac.zip` or `phoebus-0.0.1-win.zip`
-depending on the build platform.
+其余构建是相同的，例如 `ant clean dist` 来构建发行版。
 
+## 发布
 
-## Cross-Platform Build
-
-The `dependencies` include the platform-dependent JavaFX library with different content for linux, mac and windows.
-When building as described above, the result will be an executable for the build platform.
-To build for a different platform, create the `dependencies` in one of these ways:
-
-    # Either create the build platform for Linux..
-    ( cd phoebus; mvn clean verify  -Djavafx.platform=linux  -f dependencies/pom.xml )
-
-    # or Mac OS X ..
-    ( cd phoebus; mvn clean verify  -Djavafx.platform=mac    -f dependencies/pom.xml )
-
-    # or Windows:
-    ( cd phoebus; mvn clean verify  -Djavafx.platform=win    -f dependencies/pom.xml )
-
-The remaining build is the same, for example `ant clean dist` to build the distribution.
-
-
-## Release
-
-There is a release profile which helps prepare and deploy the a phoebus release.
+有一个发布配置文件，可以帮助准备和部署 Phoebus 版本。
 
 ```
 mvn -P release release:prepare
 ```
 
-- Check that there are no uncommitted changes in the sources
-- Check that there are no SNAPSHOT dependencies
-- Change the version in the POMs from x-SNAPSHOT to a new version (you will be prompted for the versions to use)
-- Transform the SCM information in the POM to include the final destination of the tag
-- Run the project tests against the modified POMs to confirm everything is in working order
-- Commit the modified POMs
-- Tag the code in the SCM with a version name (this will be prompted for)
-- Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for)
-- Commit the modified POMs
+-   检查源中是否有未提交的更改
+-   检查是否没有 SNAPSHOT 依赖项
+-   将 POM 中的版本从 x-SNAPSHOT 更改为新版本（系统将提示您使用该版本）
+-   在 POM 中转换 SCM 信息以包括标签的最终目的地
+-   针对修改后的 POM 运行项目测试，以确认一切正常
+-   提交修改后的 POM
+-   用版本名称标记 SCM 中的代码（将提示输入）
+-   将 POM 中的版本更改为新值 y-SNAPSHOT（还将提示输入这些值）
+-   提交修改后的 POM
 
-Additionally:
-- Before commiting the changes, there is a script in the target platform `release_classpath.py` which will be executed. This script can be modified to updated the .classpath and other files which need manual intervention during a release.
+另外：
+
+-   在提交更改之前，目标平台 `release_classpath.py` 有一个脚本将被执行。可以修改此脚本以更新.classpath 和其他在发行期间需要人工干预的文件。

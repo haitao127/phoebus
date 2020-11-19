@@ -38,21 +38,14 @@
 // runtime that is executing on Mac OS or Linux.
 
 // Predefined fonts that this file could re-define
-Default      = Liberation Sans - regular - 14
-Default Bold = Liberation Sans - bold    - 14
-Header 1     = Liberation Sans - bold    - 22
-Header 2     = Liberation Sans - bold    - 18
-Header 3     = Liberation Sans - bold    - 16
-Comment      = Liberation Sans - italic  - 14
-Fine Print   = Liberation Sans - regular - 12
+Default      = Source Han Sans CN - regular - 16
+Default Bold = Source Han Sans CN - bold    - 16
 
+Header 1     = Source Han Sans CN - bold    - 24
+Header 2     = Source Han Sans CN - bold    - 18
+Header 3     = Source Han Sans CN - bold    - 16
 
-// Example for a named font
-Oddball = Comic Sans MS-regular-40
+Title        = Source Han Sans CN - bold    - 32
+Sub-Title    = Source Han Sans CN - bold    - 18
 
-// On Linux resp. MacOS, these will be used instead,
-// replacnig the definition shown above.
-// Operating system selectors are: "windows", "linux", "macosx"
-Oddball(linux) = PakTypeNaqsh-regular-40
-Oddball(macosx) = Herculanum-regular-40
-
+Text         = Source Han Sans CN - regular - 16

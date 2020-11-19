@@ -2,7 +2,7 @@ sudo: required
 language: java
 dist: xenial
 jdk:
-  - openjdk11
+  - openjdk14
 
 services:
   - xvfb
@@ -11,7 +11,7 @@ before_script:
   - MAVEN_OPTS="-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
   
 script:
-  - mvn clean install
+  - mvn clean install -DskipTests
 
 after_failure:
  - find ./ -type d -name "surefire-reports" -print0 | xargs -0 -I {} find {} -iname "*.txt" -type f | xargs cat
