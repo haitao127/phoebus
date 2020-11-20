@@ -28,5 +28,5 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`dir /B product*.jar`) DO (SET JAR=%%F)
 echo on
 
 @REM To get one instance, use server mode
-@java -jar %JAR% -server 4918 %*
+@java -jar %JAR% -server 4918 -settings phoebus.ini %*
 
