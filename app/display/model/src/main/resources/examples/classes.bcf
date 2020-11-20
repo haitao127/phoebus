@@ -73,7 +73,7 @@
     <y>285</y>
     <height use_class="true">30</height>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -90,7 +90,7 @@
     <y>285</y>
     <height use_class="true">30</height>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -111,7 +111,7 @@
     <y>345</y>
     <height use_class="true">30</height>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -139,7 +139,7 @@
       </color>
     </on_color>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -159,7 +159,7 @@
     <width>70</width>
     <height use_class="true">30</height>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -186,7 +186,7 @@
       </color>
     </on_color>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -208,7 +208,7 @@
       </color>
     </on_color>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -230,7 +230,7 @@
       </color>
     </on_color>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -247,7 +247,7 @@
     <width>760</width>
     <height use_class="true">40</height>
     <font use_class="true">
-      <font name="Header 1" family="Source Han Sans CN" style="BOLD" size="24.0">
+      <font name="Header" family="Source Han Sans CN" style="BOLD" size="24.0">
       </font>
     </font>
     <foreground_color use_class="true">
@@ -255,7 +255,7 @@
       </color>
     </foreground_color>
     <background_color use_class="true">
-      <color name="Header1_Background" red="200" green="150" blue="150">
+      <color name="Header_Background" red="200" green="150" blue="150">
       </color>
     </background_color>
     <transparent use_class="true">false</transparent>
@@ -282,7 +282,7 @@
       </color>
     </on_color>
     <font use_class="true">
-      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="16.0">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
     <foreground_color use_class="true">
