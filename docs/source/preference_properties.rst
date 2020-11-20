@@ -12,7 +12,7 @@ To use them in your settings file, remember to prefix each setting with the pack
 alarm
 -----
 
-File ../../app/alarm/model/src/main/resources/alarm_preferences.properties::
+File ../..\app\alarm\model\src\main\resources\alarm_preferences.properties::
 
    # --------------------------------------
    # Package org.phoebus.applications.alarm
@@ -100,12 +100,15 @@ File ../../app/alarm/model/src/main/resources/alarm_preferences.properties::
    # Format is HH:MM:SS, for example 00:15:00 to nag every 15 minutes.
    # Set to 0 to disable
    nag_period=00:15:00
+   
+   # To turn on disable notifications feature, set the value to true
+   disable_notify_visible=false
 
 
 alarm.logging.ui
 ----------------
 
-File ../../app/alarm/logging-ui/src/main/resources/alarm_logging_preferences.properties::
+File ../..\app\alarm\logging-ui\src\main\resources\alarm_logging_preferences.properties::
 
    # -------------------------------------------------
    # Package org.phoebus.applications.alarm.logging.ui
@@ -122,7 +125,7 @@ File ../../app/alarm/logging-ui/src/main/resources/alarm_logging_preferences.pro
 archive
 -------
 
-File ../../services/archive-engine/src/main/resources/archive_preferences.properties::
+File ../..\services\archive-engine\src\main\resources\archive_preferences.properties::
 
    # ----------------------------
    # Package org.csstudio.archive
@@ -205,7 +208,7 @@ File ../../services/archive-engine/src/main/resources/archive_preferences.proper
 archive.reader.appliance
 ------------------------
 
-File ../../app/databrowser/src/main/resources/appliance_preferences.properties::
+File ../..\app\databrowser\src\main\resources\appliance_preferences.properties::
 
    # ----------------------------------------
    # Package org.phoebus.archive.reader.appliance
@@ -218,7 +221,7 @@ File ../../app/databrowser/src/main/resources/appliance_preferences.properties::
 archive.reader.rdb
 ------------------
 
-File ../../app/databrowser/src/main/resources/archive_reader_rdb_preferences.properties::
+File ../..\app\databrowser\src\main\resources\archive_reader_rdb_preferences.properties::
 
    ---------------------------------------
    # Package org.phoebus.archive.reader.rdb
@@ -280,10 +283,37 @@ File ../../app/databrowser/src/main/resources/archive_reader_rdb_preferences.pro
    fetch_size=1000
 
 
+channel.views.ui
+----------------
+
+File ../..\app\channel\views\src\main\resources\cv_preferences.properties::
+
+   # --------------------------------------
+   # Package org.phoebus.channel.views.ui
+   # --------------------------------------
+   
+   # Show the active PVs only
+   show_active_cb=false
+
+
+channelfinder
+-------------
+
+File ../..\app\channel\channelfinder\src\main\resources\channelfinder_preferences.properties::
+
+   # ----------------------------------------
+   # Package org.phoebus.channelfinder
+   # ----------------------------------------
+   
+   serviceURL=http://localhost:8080/ChannelFinder
+   username=admin
+   password=adminPass
+
+
 console
 -------
 
-File ../../app/console/src/main/resources/console_preferences.properties::
+File ../..\app\console\src\main\resources\console_preferences.properties::
 
    # ----------------------------------------
    # Package org.phoebus.applications.console
@@ -326,7 +356,7 @@ File ../../app/console/src/main/resources/console_preferences.properties::
 display.builder.editor
 ----------------------
 
-File ../../app/display/editor/src/main/resources/display_editor_preferences.properties::
+File ../..\app\display\editor\src\main\resources\display_editor_preferences.properties::
 
    # ----------------------------------------
    # Package org.csstudio.display.builder.editor
@@ -346,12 +376,15 @@ File ../../app/display/editor/src/main/resources/display_editor_preferences.prop
    #
    # GUI Menu action Applications / Display / New Display opens the following template
    new_display_template=examples:/initial.bob
+   
+   # Size of undo stack. Defaults to 50 if not set.
+   undo_stack_size=50
 
 
 display.builder.model
 ---------------------
 
-File ../../app/display/model/src/main/resources/display_model_preferences.properties::
+File ../..\app\display\model\src\main\resources\display_model_preferences.properties::
 
    # ----------------------------------------
    # Package org.csstudio.display.builder.model
@@ -442,7 +475,7 @@ File ../../app/display/model/src/main/resources/display_model_preferences.proper
 display.builder.representation
 ------------------------------
 
-File ../../app/display/representation/src/main/resources/display_representation_preferences.properties::
+File ../..\app\display\representation\src\main\resources\display_representation_preferences.properties::
 
    # ---------------------------------------------------
    # Package org.csstudio.display.builder.representation
@@ -484,12 +517,15 @@ File ../../app/display/representation/src/main/resources/display_representation_
    # Tool tips that are too long can be a problem
    # on some window systems.
    tooltip_length=150
+   
+   # Timeout for load / unload of Embedded Widget content [ms]
+   embedded_timeout=5000
 
 
 display.builder.representation.javafx
 -------------------------------------
 
-File ../../app/display/representation-javafx/src/main/resources/jfx_repr_preferences.properties::
+File ../..\app\display\representation-javafx\src\main\resources\jfx_repr_preferences.properties::
 
    # ----------------------------------------------------------
    # Package org.csstudio.display.builder.representation.javafx
@@ -505,7 +541,7 @@ File ../../app/display/representation-javafx/src/main/resources/jfx_repr_prefere
 display.builder.runtime
 -----------------------
 
-File ../../app/display/runtime/src/main/resources/display_runtime_preferences.properties::
+File ../..\app\display\runtime\src\main\resources\display_runtime_preferences.properties::
 
    # --------------------------------------------
    # Package org.csstudio.display.builder.runtime
@@ -560,7 +596,7 @@ File ../../app/display/runtime/src/main/resources/display_runtime_preferences.pr
 display.converter.edm
 ---------------------
 
-File ../../app/display/convert-edm/src/main/resources/edm_converter_preferences.properties::
+File ../..\app\display\convert-edm\src\main\resources\edm_converter_preferences.properties::
 
    # ------------------------------------------
    # Package org.csstudio.display.converter.edm
@@ -607,7 +643,7 @@ File ../../app/display/convert-edm/src/main/resources/edm_converter_preferences.
 email
 -----
 
-File ../../core/email/src/main/resources/email_preferences.properties::
+File ../..\core\email\src\main\resources\email_preferences.properties::
 
    # -------------------------
    # Package org.phoebus.email
@@ -623,12 +659,16 @@ File ../../core/email/src/main/resources/email_preferences.properties::
    # User and password for connecting to the mail host, usually left empty
    username=
    password=
+   
+   # Default address to be used for From:
+   # if it is left empty then the last used from address is used
+   from=
 
 
 errlog
 ------
 
-File ../../app/errlog/src/main/resources/errlog_preferences.properties::
+File ../..\app\errlog\src\main\resources\errlog_preferences.properties::
 
    # ---------------------------------------
    # Package org.phoebus.applications.errlog
@@ -641,7 +681,7 @@ File ../../app/errlog/src/main/resources/errlog_preferences.properties::
 filebrowser
 -----------
 
-File ../../app/filebrowser/src/main/resources/filebrowser_preferences.properties::
+File ../..\app\filebrowser\src\main\resources\filebrowser_preferences.properties::
 
    # --------------------------------------------
    # Package org.phoebus.applications.filebrowser
@@ -651,7 +691,7 @@ File ../../app/filebrowser/src/main/resources/filebrowser_preferences.properties
    # May use system properties like "$(user.home)".
    # At runtime, user can select a different base directory,
    # but pressing the "Home" button reverts to this one.
-   default_root=$(user.home)
+   default_root=$(user.home)/phoebus-workspace
    
    # Show hidden files (File.isHidden)?
    show_hidden=false
@@ -660,7 +700,7 @@ File ../../app/filebrowser/src/main/resources/filebrowser_preferences.properties
 framework.autocomplete
 ----------------------
 
-File ../../core/framework/src/main/resources/autocomplete_preferences.properties::
+File ../..\core\framework\src\main\resources\autocomplete_preferences.properties::
 
    # ------------------------------------------
    # Package org.phoebus.framework.autocomplete
@@ -672,6 +712,7 @@ File ../../core/framework/src/main/resources/autocomplete_preferences.properties
    enable_sys_pv_proposals=true
    enable_pva_pv_proposals=true
    enable_mqtt_pv_proposals=false
+   enable_formula_proposals=true
    
    # Site-specific proposal providers can be added via PVProposalProvider SPI,
    # and disabled by removing the contribution.
@@ -680,7 +721,7 @@ File ../../core/framework/src/main/resources/autocomplete_preferences.properties
 framework.workbench
 -------------------
 
-File ../../core/framework/src/main/resources/workbench_preferences.properties::
+File ../..\core\framework\src\main\resources\workbench_preferences.properties::
 
    # ---------------------------------------
    # Package org.phoebus.framework.workbench
@@ -723,7 +764,7 @@ File ../../core/framework/src/main/resources/workbench_preferences.properties::
 javafx.rtplot
 -------------
 
-File ../../app/rtplot/src/main/resources/rt_plot_preferences.properties::
+File ../..\app\rtplot\src\main\resources\rt_plot_preferences.properties::
 
    # ----------------------------------
    # Package org.csstudio.javafx.rtplot
@@ -747,7 +788,7 @@ File ../../app/rtplot/src/main/resources/rt_plot_preferences.properties::
 logbook.ui
 ----------
 
-File ../../app/logbook/ui/src/main/resources/log_ui_preferences.properties::
+File ../..\app\logbook\ui\src\main\resources\log_ui_preferences.properties::
 
    # ------------------------------
    # Package org.phoebus.logbook.ui
@@ -762,12 +803,69 @@ File ../../app/logbook/ui/src/main/resources/log_ui_preferences.properties::
    
    # Whether or not to save user credentials to file so they only have to be entered once when making log entries.
    save_credentials=false
+   
+   # Stylesheet for the items in the log calendar view
+   calendar_view_item_stylesheet=Agenda.css
+   
+   # Text to render for the "Level" field of a log entry. Sites may wish to customize this with respect to
+   # its wording and its implied purpose.
+   level_field_name=Level:
+
+
+olog.api
+--------
+
+File ../..\app\logbook\olog\src\main\resources\olog_preferences.properties::
+
+   # --------------------------------------
+   # Package org.phoebus.olog.api
+   # --------------------------------------
+   
+   # The olog url
+   olog_url=localhost:9092
+   
+   # User credentials for olog
+   username=user
+   password=****
+   
+   # Enable debugging of http request and resposnsed
+   debug=false
+   
+   # The connection timeout for the Jersey client, in ms. 0 = infinite.
+   connectTimeout=0
+
+
+olog.es.api
+-----------
+
+File ../..\app\logbook\olog-es\src\main\resources\olog_es_preferences.properties::
+
+   # --------------------------------------
+   # Package org.phoebus.olog.es.api
+   # --------------------------------------
+   
+   # The olog url
+   olog_url=http://localhost:8080/Olog
+   
+   # User credentials for olog
+   username=admin
+   password=1234
+   
+   # Enable debugging of http request and resposnsed
+   debug=false
+   
+   # The connection timeout for the Jersey client, in ms. 0 = infinite.
+   connectTimeout=0
+   
+   # Comma separated list of "Levels" in the create logbook entry UI.
+   # Sites may wish to customize (and localize) this.
+   levels=Urgent,Suggestion,Info,Request,Problem
 
 
 pv
 --
 
-File ../../core/pv/src/main/resources/pv_preferences.properties::
+File ../..\core\pv\src\main\resources\pv_preferences.properties::
 
    # ----------------------
    # Package org.phoebus.pv
@@ -781,7 +879,7 @@ File ../../core/pv/src/main/resources/pv_preferences.properties::
 pv.ca
 -----
 
-File ../../core/pv/src/main/resources/pv_ca_preferences.properties::
+File ../..\core\pv\src\main\resources\pv_ca_preferences.properties::
 
    # -------------------------
    # Package org.phoebus.pv.ca
@@ -825,7 +923,7 @@ File ../../core/pv/src/main/resources/pv_ca_preferences.properties::
 pv.formula
 ----------
 
-File ../../core/pv/src/main/resources/pv_formula_preferences.properties::
+File ../..\core\pv\src\main\resources\pv_formula_preferences.properties::
 
    # ------------------------------
    # Package org.phoebus.pv.formula
@@ -838,7 +936,7 @@ File ../../core/pv/src/main/resources/pv_formula_preferences.properties::
 pv.mqtt
 -------
 
-File ../../core/pv/src/main/resources/pv_mqtt_preferences.properties::
+File ../..\core\pv\src\main\resources\pv_mqtt_preferences.properties::
 
    # ---------------------------
    # Package org.phoebus.pv.mqtt
@@ -852,7 +950,7 @@ File ../../core/pv/src/main/resources/pv_mqtt_preferences.properties::
 pvtable
 -------
 
-File ../../app/pvtable/src/main/resources/pv_table_preferences.properties::
+File ../..\app\pvtable\src\main\resources\pv_table_preferences.properties::
 
    # ----------------------------------------
    # Package org.phoebus.applications.pvtable
@@ -877,7 +975,7 @@ File ../../app/pvtable/src/main/resources/pv_table_preferences.properties::
 pvtree
 ------
 
-File ../../app/pvtree/src/main/resources/pv_tree_preferences.properties::
+File ../..\app\pvtree\src\main\resources\pv_tree_preferences.properties::
 
    # ---------------------------------------
    # Package org.phoebus.applications.pvtree
@@ -909,7 +1007,7 @@ File ../../app/pvtree/src/main/resources/pv_tree_preferences.properties::
    #
    # alarm record has INP1-10. 1-9 handled by pattern, INP10 listed
    
-   fields=aai(INP);ai(INP);bi(INP);compress(INP);longin(INP);mbbi(INP);mbbiDirect(INP);mbboDirect(INP);stringin(INP);lsi(INP);subArray(INP);waveform(INP);aao(DOL);ao(DOL);bo(DOL);fanout(DOL);longout(DOL);mbbo(DOL);stringout(DOL);sub(INPA-L);genSub(INPA-L);calc(INPA-L);calcout(INPA-L);aSub(INPA-U);seq(SELN);bigASub(INP001-128);scalcout(INPA-L,INAA,INBB,INCC,INDD,INEE,INFF,INGG,INHH,INII,INJJ,INKK,INLL);alarm(INP1-9,INP10)
+   fields=aai(INP);ai(INP);bi(INP);compress(INP);longin(INP);int64in(INP);mbbi(INP);mbbiDirect(INP);mbboDirect(INP);stringin(INP);lsi(INP);subArray(INP);waveform(INP);aao(DOL);ao(DOL);bo(DOL);fanout(DOL);longout(DOL);int64out(DOL);mbbo(DOL);stringout(DOL);sub(INPA-L);genSub(INPA-L);calc(INPA-L);calcout(INPA-L);aSub(INPA-U);seq(SELN);bigASub(INP001-128);scalcout(INPA-L,INAA,INBB,INCC,INDD,INEE,INFF,INGG,INHH,INII,INJJ,INKK,INLL);alarm(INP1-9,INP10)
    
    
    # Max update period in seconds
@@ -919,7 +1017,7 @@ File ../../app/pvtree/src/main/resources/pv_tree_preferences.properties::
 saveandrestore
 --------------
 
-File ../../app/save-and-restore/ui/src/main/resources/save_and_restore_preferences.properties::
+File ../..\app\save-and-restore\ui\src\main\resources\save_and_restore_preferences.properties::
 
    # -----------------------------------------------
    # Package org.phoebus.applications.saveandrestore
@@ -933,12 +1031,32 @@ File ../../app/save-and-restore/ui/src/main/resources/save_and_restore_preferenc
    
    # Connect timeout in (ms) used by the Jersey client
    httpClient.connectTimeout=1000
+   
+   # Extract snapshots from TreeView to ListView
+   splitSnapshot=false
+   
+   # Sort snapshots in reverse order of created time. Last item comes first.
+   sortSnapshotsTimeReversed=false
+   
+   # In "Create/Add to a saveset" dialog, split savesets from folder and show them in ListView
+   splitSaveset=false
+   
+   # Specify hierarchy parser class to enable TreeTableView in snapshot
+   # Hierarchy parser class should be in ui/snapshot/hierarchyparser
+   # RegexHierarchyParser is provided for convenience. Use , as separator for each regex pattern.
+   # First matched pattern is used to create its hierarchy.
+   treeTableView.enable=false
+   treeTableView.hierarchyParser=RegexHierarchyParser
+   regexHierarchyParser.regexList=(\\w+)_(\\w+):(\\w+)_(\\w+):(.*),(\\w+)_(\\w+):(\\w+)_(.*),(\\w+)_(\\w+):(.*),(\\w+):(.*)
+   
+   # Importing/exporting saveset/snapshot to/from CSV (Git SNP/BMS compatible)
+   enableCSVIO=false
 
 
 scan.client
 -----------
 
-File ../../app/scan/client/src/main/resources/scan_client_preferences.properties::
+File ../..\app\scan\client\src\main\resources\scan_client_preferences.properties::
 
    # ----------------------------------------
    # Package org.csstudio.scan.client
@@ -957,7 +1075,7 @@ File ../../app/scan/client/src/main/resources/scan_client_preferences.properties
 scan.ui
 -------
 
-File ../../app/scan/ui/src/main/resources/scan_ui_preferences.properties::
+File ../..\app\scan\ui\src\main\resources\scan_ui_preferences.properties::
 
    # ----------------------------
    # Package org.csstudio.scan.ui
@@ -970,7 +1088,7 @@ File ../../app/scan/ui/src/main/resources/scan_ui_preferences.properties::
 security
 --------
 
-File ../../core/security/src/main/resources/phoebus_security_preferences.properties::
+File ../..\core\security\src\main\resources\phoebus_security_preferences.properties::
 
    # ----------------------------
    # Package org.phoebus.security
@@ -1002,7 +1120,7 @@ File ../../core/security/src/main/resources/phoebus_security_preferences.propert
 trends.databrowser3
 -------------------
 
-File ../../app/databrowser/src/main/resources/databrowser_preferences.properties::
+File ../..\app\databrowser\src\main\resources\databrowser_preferences.properties::
 
    # ----------------------------------------
    # Package org.csstudio.trends.databrowser3
@@ -1019,7 +1137,7 @@ File ../../app/databrowser/src/main/resources/databrowser_preferences.properties
    scan_period=0.0
    
    # Default plot update period in seconds
-   update_period=3.0
+   update_period=1.0
    
    # .. elements in live sample buffer
    live_buffer_size=5000
@@ -1036,7 +1154,7 @@ File ../../app/databrowser/src/main/resources/databrowser_preferences.properties
    # Default trace type for newly created traces.
    # Allowed values are defined by org.csstudio.trends.databrowser3.model.TraceType:
    # AREA, ERROR_BARS, SINGLE_LINE, AREA_DIRECT, SINGLE_LINE_DIRECT, SQUARES, ...
-   trace_type=AREA
+   trace_type=SINGLE_LINE
    
    # Delay in milliseconds that delays archive requests when
    # the user moves the time axis to avoid a flurry of archive requests
@@ -1091,10 +1209,12 @@ File ../../app/databrowser/src/main/resources/databrowser_preferences.properties
    use_default_archives=false
    
    # If there is an error in retrieving archived data,
-   # including that the channel is not found in the archive,
-   # should this be displayed in a dialog box,
-   # or logged as a WARNING (and thus visible on the console)?
-   prompt_for_errors=false
+   # should that archive data source be dropped from the channel?
+   # This is meant to avoid needless queries to archives that cannot be accessed.
+   # Note that archive data sources which clearly report a channel as "not found"
+   # will still be dropped. This option only configures if data sources which
+   # return an error (cannot connect, ...) should be queried again for the given channel.
+   drop_failed_archives=true
    
    # Re-scale behavior when archived data arrives: NONE, STAGGER
    archive_rescale=STAGGER
@@ -1107,12 +1227,6 @@ File ../../app/databrowser/src/main/resources/databrowser_preferences.properties
    #It is a path to the directory where the PLT files for WebDataBrowser are placed.
    plt_repository=/opt/codac/opi/databrowser/
    
-   #SendEmailAction default sender
-   # By defining a default email, users who select "Email.." from the context menu
-   # do not need to enter an email address.
-   # If left empty, elog dialog will require users to enter a "From:" address for the sender.
-   email_default_sender=
-   
    # Automatically refresh history data when the liver buffer is full
    # This will prevent the horizontal lines in the shown data when the buffer
    # is too small to cover the selected time range
@@ -1120,7 +1234,7 @@ File ../../app/databrowser/src/main/resources/databrowser_preferences.properties
    
    # Scroll step, i.e. size of the 'jump' left when scrolling, in seconds.
    # (was called 'future_buffer')
-   scroll_step = 5
+   scroll_step = 1
    
    # Display the trace names on the Value Axis
    # the default value is "true". "false" to not show the trace names on the Axis
@@ -1131,17 +1245,12 @@ File ../../app/databrowser/src/main/resources/databrowser_preferences.properties
    
    # Prompt / warn when making trace invisible?
    prompt_for_visibility = true
-   
-   # Shortcuts offered in the Time Axis configuration
-   # Format:
-   # Text for shortcut,start_spec|Another shortcut,start_spec
-   time_span_shortcuts=30 Minutes,-30 min|1 Hour,-1 hour|12 Hours,-12 hour|1 Day,-1 days|7 Days,-7 days
 
 
 ui
 --
 
-File ../../core/ui/src/main/resources/phoebus_ui_preferences.properties::
+File ../..\core\ui\src\main\resources\phoebus_ui_preferences.properties::
 
    # ----------------------
    # Package org.phoebus.ui
@@ -1172,7 +1281,7 @@ File ../../core/ui/src/main/resources/phoebus_ui_preferences.properties::
    #
    # This makes the display_runtime and the 3d_viewer default apps,
    # using display_editor and a potentially configured text editor for *.shp files secondary
-   default_apps=run,3d,convert_edm
+   default_apps=run
    
    # Hide SPI-provided menu entries
    # Comma-separated list of class names
@@ -1182,10 +1291,10 @@ File ../../core/ui/src/main/resources/phoebus_ui_preferences.properties::
    #
    # Format:
    # uri1 | uri2,Display name 2 | uri3,Display name 3
-   top_resources=examples:/01_main.bob?app=display_runtime,Example Display | pv://?sim://sine&app=probe,Probe Example | pv://?sim://sine&loc://x(10)&app=pv_table,PV Table Example | http://www.google.com?app=web, Google
+   top_resources=$(user.home)/phoebus-workspace/test.bob?app=display_runtime,Main OPI
    
    # Home display file. "Home display" button will navigate to this display.
-   home_display=examples:/01_main.bob?app=display_runtime,Example Display
+   home_display=$(user.home)/phoebus-workspace/first.bob?app=display_runtime,Main OPI
    
    # How many array elements to show when formatting as text?
    max_array_formatting=256
@@ -1199,12 +1308,15 @@ File ../../core/ui/src/main/resources/phoebus_ui_preferences.properties::
    # Show user ID in status bar?
    status_show_user=true
    
+   # Set default save path
+   default_save_path=$(user.home)/phoebus-workspace
+   
 
 
 update
 ------
 
-File ../../app/update/src/main/resources/update_preferences.properties::
+File ../..\app\update\src\main\resources\update_preferences.properties::
 
    # ----------------------------------------
    # Package org.phoebus.applications.update
@@ -1289,7 +1401,7 @@ File ../../app/update/src/main/resources/update_preferences.properties::
 viewer3d
 --------
 
-File ../../app/3d-viewer/src/main/resources/3d_viewer_preferences.properties::
+File ../..\app\3d-viewer\src\main\resources\3d_viewer_preferences.properties::
 
    # --------------------------------
    # Package org.phoebus.app.viewer3d

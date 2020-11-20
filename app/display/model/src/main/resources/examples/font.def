@@ -38,14 +38,12 @@
 // runtime that is executing on Mac OS or Linux.
 
 // Predefined fonts that this file could re-define
-Default      = Source Han Sans CN - regular - 16
-Default Bold = Source Han Sans CN - bold    - 16
+Default      = Source Han Sans CN - regular - 20
+Default Bold = Source Han Sans CN - bold    - 20
 
-Header 1     = Source Han Sans CN - bold    - 24
-Header 2     = Source Han Sans CN - bold    - 18
-Header 3     = Source Han Sans CN - bold    - 16
+Header       = Source Han Sans CN - bold    - 24
 
 Title        = Source Han Sans CN - bold    - 32
 Sub-Title    = Source Han Sans CN - bold    - 18
 
-Text         = Source Han Sans CN - regular - 16
+Text         = Source Han Sans CN - regular - 20

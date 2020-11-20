@@ -32,18 +32,17 @@ Title_Foreground = 250, 250, 250
 
 Subtitle_Foreground = 250, 250, 250
 
-Header1_Background = 200, 150, 150
-Header1_Foreground = 5, 5, 5
-
-Header2_Foreground = 5, 5, 5
-Header3_Foreground = 5, 5, 5
+Header_Background = 200, 150, 150
+Header_Foreground = 5, 5, 5
 
 STOP = 252, 13, 27
 ATTENTION = 255,160,0
 
 LED-GREEN-ON = 0, 255, 0
-LED-GREEN-OFF = 60,100,60
+LED-GREEN-OFF = 60, 100, 60
 LED-RED-ON = 255, 0, 0
-LED-RED-OFF = 100,60,60
+LED-RED-OFF = 100, 60, 60
 LED-ORANGE-ON = 255, 210, 30
-LED-ORANGE-OFF = 100,100,60
+LED-ORANGE-OFF = 100, 100, 60
+LED-GRAY-ON = 128, 128, 128
+LED-GRAY-OFF = 204, 204, 204
