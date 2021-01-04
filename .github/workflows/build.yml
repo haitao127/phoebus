@@ -12,7 +12,7 @@ jobs:
       with:
         java-version: 14
     - name: Build
-      run: mvn --batch-mode install
+      run: mvn --batch-mode install -DskipTests
     - name: Publish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
