@@ -7,14 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
+    - name: Set up JDK 14
       uses: actions/setup-java@v1
       with:
-        java-version: 11
+        java-version: 14
     - name: Build
       run: mvn --batch-mode install
     - name: Publish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: mvn --batch-mode -DskipTests deploy
-      if: ${{ github.repository == 'ControlSystemStudio/phoebus' && (github.ref == 'refs/heads/master' || github.ref == 'refs/tags/*') }}
+      if: ${{ github.repository == 'haitao127/phoebus' && (github.ref == 'refs/heads/master' || github.ref == 'refs/tags/*') }}
