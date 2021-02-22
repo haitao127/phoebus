@@ -57,7 +57,7 @@ import org.phoebus.olog.es.api.model.OlogLog;
 /**
  * A client to the Olog-es webservice
  *
- * @author Eric Berryman taken from shroffk
+ * @author Kunal Shroff
  */
 public class OlogClient implements LogClient {
     private static final Logger logger = Logger.getLogger(OlogClient.class.getName());
@@ -92,11 +92,6 @@ public class OlogClient implements LogClient {
             this.protocol = this.ologURI.getScheme();
         }
 
-        private OlogClientBuilder(URI uri) {
-            this.ologURI = uri;
-            this.protocol = this.ologURI.getScheme();
-        }
-
         /**
          * Creates a {@link OlogClientBuilder} for a CF client to Default URL in the
          * channelfinder.properties.
@@ -105,27 +100,6 @@ public class OlogClient implements LogClient {
          */
         public static OlogClientBuilder serviceURL() {
             return new OlogClientBuilder();
-        }
-
-        /**
-         * Creates a {@link OlogClientBuilder} for a CF client to URI <code>uri</code>.
-         *
-         * @param uri
-         * @return {@link OlogClientBuilder}
-         */
-        public static OlogClientBuilder serviceURL(String uri) {
-            return new OlogClientBuilder(URI.create(uri));
-        }
-
-        /**
-         * Creates a {@link OlogClientBuilder} for a CF client to {@link URI}
-         * <code>uri</code>.
-         *
-         * @param uri
-         * @return {@link OlogClientBuilder}
-         */
-        public static OlogClientBuilder serviceURL(URI uri) {
-            return new OlogClientBuilder(uri);
         }
 
         /**
@@ -255,6 +229,7 @@ public class OlogClient implements LogClient {
 
         try {
             clientResponse = service.path("logs")
+                    .queryParam("markup", "commonmark")
                     .type(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_XML)
                     .accept(MediaType.APPLICATION_JSON)
@@ -265,11 +240,14 @@ public class OlogClient implements LogClient {
                 OlogLog createdLog = OlogObjectMappers.logEntryDeserializer.readValue(clientResponse.getEntityInputStream(), OlogLog.class);
                 log.getAttachments().stream().forEach(attachment -> {
                     FormDataMultiPart form = new FormDataMultiPart();
+                    form.bodyPart(new FormDataBodyPart("id", attachment.getId()));
                     form.bodyPart(new FileDataBodyPart("file", attachment.getFile()));
                     form.bodyPart(new FormDataBodyPart("filename", attachment.getName()));
                     form.bodyPart(new FormDataBodyPart("fileMetadataDescription", attachment.getContentType()));
 
-                    ClientResponse attachementResponse = service.path("logs").path("attachments").path(String.valueOf(createdLog.getId()))
+                    ClientResponse attachementResponse = service.path("logs")
+                            .path("attachments")
+                            .path(String.valueOf(createdLog.getId()))
                            .type(MediaType.MULTIPART_FORM_DATA)
                            .accept(MediaType.APPLICATION_XML)
                            .accept(MediaType.APPLICATION_JSON)
@@ -448,6 +426,11 @@ public class OlogClient implements LogClient {
      */
     private List<String> levels;
 
+    /**
+     * Service URL as configured by properties.
+     */
+    private String serviceUrl;
+
     @Override
     public Collection<String> listLevels() {
         if(levels == null){
@@ -500,4 +483,12 @@ public class OlogClient implements LogClient {
         }
     }
 
+    @Override
+    public String getServiceUrl(){
+        if(serviceUrl == null){
+            OlogProperties ologProperties = new OlogProperties();
+            serviceUrl = ologProperties.getPreferenceValue("olog_url");
+        }
+        return serviceUrl;
+    }
 }

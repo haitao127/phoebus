@@ -5,20 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.phoebus.logbook.ui.write;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-
-import org.phoebus.framework.preferences.PhoebusPreferenceService;
-import org.phoebus.logbook.ui.Messages;
-import org.phoebus.ui.dialog.DialogHelper;
-import org.phoebus.ui.javafx.ClearingTextField;
-import org.phoebus.ui.javafx.ImageCache;
+package org.phoebus.ui.dialog;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -40,6 +27,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.phoebus.framework.preferences.PhoebusPreferenceService;
+import org.phoebus.ui.Messages;
+import org.phoebus.ui.javafx.ClearingTextField;
+import org.phoebus.ui.javafx.ImageCache;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /** Dialog to select items from a list of available items and build a list of selected items.
  *  @author Evan Smith
@@ -115,7 +113,7 @@ public class ListSelectionDialog extends Dialog<Boolean>
         add.setTooltip(new Tooltip(Messages.Add_Tooltip));
         add.setOnAction(event -> addSelectedItems());
 
-        final Button remove = new Button(Messages.Remove, ImageCache.getImageView(ImageCache.class, REMOVE_ICON));
+        final Button remove = new Button(org.phoebus.ui.javafx.Messages.Remove, ImageCache.getImageView(ImageCache.class, REMOVE_ICON));
         remove.setTooltip(new Tooltip(Messages.Remove_Tooltip));
         remove.setOnAction(event -> removeItems(selectedItems.getSelectionModel().getSelectedItems()));
 
