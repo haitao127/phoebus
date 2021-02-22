@@ -19,34 +19,22 @@ Phoebus 是一个框架和一系列工具，用于监视和操作大型控制系
 mvn clean verify -f dependencies/pom.xml
 ```
 
-<<<<<<< HEAD
-## 用 Maven 构建
+## 使用Maven进行构建
 
-### 快速入门（构建和运行）
+定义JAVA_HOME环境变量，使其指向Java的安装目录。
 
-生成并运行 Phoebus 产品
-
-=======
-## Building with maven
-
-Define the JAVA_HOME environment variable to point to your Java installation directory. 
-Mac OS users should use something like:
->>>>>>> 557b2e2b76b7bb0b52da2f4021fa79f4ce7e6361
+Mac操作系统的用户应该使用如下所示的配置：
 ```
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.5+10/Contents/Home
 ```
-Verify through:
+可以通过以下命令进行验证:
 ```
 $JAVA_HOME/bin/java -version
 ```
 
-<<<<<<< HEAD
-### 构建
-=======
-Make sure your PATH environment variable includes JAVA_HOME and the path to the Maven executable.
+请确保PATH环境变量包括了JAVA_HOME和Maven可执行程序的路径。
 
-### Build
->>>>>>> 557b2e2b76b7bb0b52da2f4021fa79f4ce7e6361
+### 构建
 
 构建整个 phoebus 堆栈
 
@@ -60,29 +48,13 @@ mvn clean install
 
 ### 运行 Phoebus 应用程序
 
-与 Maven 一起运行
-
-<<<<<<< HEAD
-```
-cd phoebus-product
-mvn exec:java
-```
-
-运行产品罐
-
-=======
-To run the product jar
->>>>>>> 557b2e2b76b7bb0b52da2f4021fa79f4ce7e6361
+运行jar程序：
 ```
 cd phoebus-product/target
 java -jar product-*-SNAPSHOT.jar
 ```
 
-<<<<<<< HEAD
-## 用 ant 构建
-=======
-## Building with ant
->>>>>>> 557b2e2b76b7bb0b52da2f4021fa79f4ce7e6361
+## 使用Ant进行构建
 
 ```
 ant clean run
@@ -105,23 +77,11 @@ eclipse/eclipse -consoleLog
 -   Java，已安装的 JRE：默认为 JDK 9 或更高版本
 -   Java，编译器：“JDK 符合性” 应为 “9” 或更高
 
-<<<<<<< HEAD
-### 使用纯 Java 配置
+### 使用简单的Java配置
 
-`Existing Projects into Workspace` 使用 `File` ， `Import` ， `General` ， `Existing Projects into Workspace` 。选择 phoebus 根目录，然后选中 “搜索嵌套项目” 选项。
+使用文件-导入-常规-现有项目到工作区。 选择phoebus根目录，然后选中“搜索相关项目”选项。
 
-默认情况下，应选择所有项目（“依赖项”，“核心框架”，..，“产品”）。
-=======
-To import the project:
-
-* Start IntelliJ. Make sure to install the Lombok plugin.
-* Import Project
-* Select the Phoebus directory
-* Import project from external model: Maven
-* Accept the default options and click Next twice
-* Ensure that the JDK is version 11 or above
-* Change the project name to Phoebus and click finish
->>>>>>> 557b2e2b76b7bb0b52da2f4021fa79f4ce7e6361
+默认情况下，应选择所有项目（“依赖项”，“核心框架”，……，“产品”）。
 
 需要编辑文件 `dependencies/phoebus-target/.classpath` 列出所有 `phoebus-target/target/lib/javafx*.jar` 文件。
 
