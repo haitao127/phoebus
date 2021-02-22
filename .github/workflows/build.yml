@@ -13,8 +13,3 @@ jobs:
         java-version: 14
     - name: Build
       run: mvn --batch-mode install -DskipTests
-    - name: Publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: mvn --batch-mode -DskipTests deploy
-      if: ${{ github.repository == 'haitao127/phoebus' && (github.ref == 'refs/heads/master' || github.ref == 'refs/tags/*') }}
