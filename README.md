@@ -1,8 +1,5 @@
 # phoebus
-<<<<<<< HEAD
-=======
 ![GitHub Actions Status](https://github.com/ControlSystemStudio/phoebus/actions/workflows/build.yml/badge.svg)
->>>>>>> 8419f2b04be78fd2a0fc775148c4dcf294c0c58e
 
 [![Build Status](https://travis-ci.com/haitao127/phoebus.svg?branch=master)](https://travis-ci.com/haitao127/phoebus)
 
