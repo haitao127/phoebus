@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018-2020 Oak Ridge National Laboratory.
+ * Copyright (c) 2018-2021 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -292,9 +292,15 @@ public class AlarmClient
             else if (type.equals(AlarmSystem.STATE_PREFIX))
             {   // State update
                 if (json == null)
-                    logger.log(Level.WARNING, "Got state update with null content: " + record.key() + " " + node_config);
+                {   // State update for deleted node, ignore
+                    logger.log(Level.FINE, () -> "Got state update for deleted node: " + record.key() + " " + node_config);
+                    return;
+                }
                 else if (! JsonModelReader.isStateUpdate(json))
+                {
                     logger.log(Level.WARNING, "Got state update with config content: " + record.key() + " " + node_config);
+                    return;
+                }
                 else if (deleted_paths.contains(path))
                 {
                     // It it _deleted_??
@@ -385,7 +391,7 @@ public class AlarmClient
     {
         // Mark path as deleted so we ignore state updates
         deleted_paths.add(path);
-        
+
         final AlarmTreeItem<?> node = findNode(path);
         if (node == null)
             return null;
@@ -429,7 +435,8 @@ public class AlarmClient
             {   // Done when creating leaf
                 if (last &&  is_leaf)
                 {
-                    node = new AlarmClientLeaf(parent, name);
+                    node = new AlarmClientLeaf(parent.getPathName(), name);
+                    node.addToParent(parent);
                     logger.log(Level.FINE, "Create " + path);
                     for (final AlarmClientListener listener : listeners)
                         listener.itemAdded(node);
@@ -437,7 +444,8 @@ public class AlarmClient
                 }
                 else
                 {
-                    node = new AlarmClientNode(parent, name);
+                    node = new AlarmClientNode(parent.getPathName(), name);
+                    node.addToParent(parent);
                     for (final AlarmClientListener listener : listeners)
                         listener.itemAdded(node);
                 }

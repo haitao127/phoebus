@@ -1,290 +1,155 @@
+/*
+ * Copyright (C) 2020 European Spallation Source ERIC.
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
 package org.phoebus.logbook.olog.ui;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Worker.State;
-import javafx.embed.swing.SwingFXUtils;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TitledPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import org.commonmark.Extension;
-import org.commonmark.ext.gfm.tables.TableBlock;
-import org.commonmark.ext.gfm.tables.TablesExtension;
-import org.commonmark.ext.image.attributes.ImageAttributesExtension;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.AttributeProvider;
-import org.commonmark.renderer.html.HtmlRenderer;
-import org.phoebus.logbook.Attachment;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToolBar;
+import javafx.scene.layout.BorderPane;
 import org.phoebus.logbook.LogClient;
 import org.phoebus.logbook.LogEntry;
-import org.phoebus.logbook.Logbook;
-import org.phoebus.logbook.Tag;
-import org.phoebus.ui.javafx.ImageCache;
+import org.phoebus.logbook.LogbookException;
+import org.phoebus.logbook.Property;
+import org.phoebus.logbook.olog.ui.write.LogEntryEditorStage;
+import org.phoebus.olog.es.api.model.LogGroupProperty;
+import org.phoebus.olog.es.api.model.OlogLog;
+import org.phoebus.ui.docking.DockPane;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import static org.phoebus.util.time.TimestampFormats.MILLI_FORMAT;
 
 public class LogEntryDisplayController {
 
-    private static final Logger logger = Logger.getLogger(LogEntryDisplayController.class.getName());
+    @FXML
+    private SingleLogEntryDisplayController singleLogEntryDisplayController;
+    @FXML
+    private MergedLogEntryDisplayController mergedLogEntryDisplayController;
+    @FXML
+    private ToggleButton showHideLogEntryGroupButton;
+    @FXML
+    private ToolBar toolBar;
+    @FXML
+    private Button replyButton;
+    @FXML
+    private BorderPane emptyPane;
+    @FXML
+    private Node singleLogEntryDisplay;
+    @FXML
+    private Node mergedLogEntryDisplay;
 
+    private LogClient logClient;
 
-    static final Image tag = ImageCache.getImage(LogEntryDisplayController.class, "/icons/add_tag.png");
-    static final Image logbook = ImageCache.getImage(LogEntryDisplayController.class, "/icons/logbook-16.png");
-    private final LogClient logClient;
+    private SimpleObjectProperty<LogEntry> logEntryProperty =
+            new SimpleObjectProperty<>();
 
-    private HtmlRenderer htmlRenderer;
-    private Parser parser;
+    private Logger logger = Logger.getLogger(LogEntryDisplayController.class.getName());
 
-    @FXML
-    Label logTime;
-    @FXML
-    Label logOwner;
-    @FXML
-    Label logTitle;
-    @FXML
-    WebView logDescription;
+    private SimpleBooleanProperty hasLinkedEntriesProperty = new SimpleBooleanProperty(false);
 
-    @FXML
-    HBox metaDataBox;
-    @FXML
-    ListView<String> logTags;
-    @FXML
-    ListView<String> LogLogbooks;
+    private static final int EMPTY = 0;
+    private static final int SINGLE = 1;
+    private static final int MERGED = 2;
+    private SimpleIntegerProperty currentViewProperty = new SimpleIntegerProperty(EMPTY);
 
-    @FXML
-    public TitledPane attachmentsPane;
-    @FXML
-    public VBox attachments;
-    @FXML
-    public LogAttachmentsController attachmentsController;
-
-    @FXML
-    public TitledPane propertiesPane;
-    @FXML
-    public VBox properties;
-    @FXML
-    public LogPropertiesController propertiesController;
-
-    private LogEntry logEntry;
-
-    public LogEntryDisplayController(){
-        this.logClient = null;
-    }
-
-    public LogEntryDisplayController(LogClient logClient){
+    public LogEntryDisplayController(LogClient logClient) {
         this.logClient = logClient;
     }
 
     @FXML
     public void initialize() {
-        logTime.setStyle("-fx-font-weight: bold");
-        logTitle.setStyle("-fx-font-weight: bold");
-
-        logTags.setVisible(false);
-        LogLogbooks.setVisible(false);
-
-        logTags.setCellFactory(listView -> new ListCell<String>() {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setGraphic(new ImageView(tag));
-                    setText(item);
-                }
-            }
-        });
-
-        LogLogbooks.setCellFactory(listView -> new ListCell<String>() {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setGraphic(new ImageView(logbook));
-                    setText(item);
-                }
-            }
-        });
-
-        List<Extension> extensions = Arrays.asList(TablesExtension.create(), ImageAttributesExtension.create());
-        parser = Parser.builder().extensions(extensions).build();
-        htmlRenderer = HtmlRenderer.builder()
-                .attributeProviderFactory(context -> new OlogAttributeProvider())
-                .extensions(extensions).build();
+        replyButton.disableProperty()
+                .bind(Bindings.createBooleanBinding(() -> logEntryProperty.get() == null, logEntryProperty));
+        showHideLogEntryGroupButton.disableProperty().bind(hasLinkedEntriesProperty.not());
+        toolBar.setVisible(LogbookUIPreferences.log_entry_groups_support);
+        toolBar.setManaged(LogbookUIPreferences.log_entry_groups_support);
+        emptyPane.visibleProperty()
+                .bind(Bindings.createBooleanBinding(() -> currentViewProperty.get() == EMPTY, currentViewProperty));
+        singleLogEntryDisplay.visibleProperty()
+                .bind(Bindings.createBooleanBinding(() -> currentViewProperty.get() == SINGLE, currentViewProperty));
+        mergedLogEntryDisplay.visibleProperty()
+                .bind(Bindings.createBooleanBinding(() -> currentViewProperty.get() == MERGED, currentViewProperty));
     }
 
-    public void refresh() {
-        if (logEntry != null) {
-
-            // System.out.println("expand att: "+!logEntry.getAttachments().isEmpty()+ "
-            // tags: " + !logEntry.getTags().isEmpty() + "
-            // logbooks:"+!logEntry.getLogbooks().isEmpty());
-
-            attachmentsPane.setExpanded(logEntry.getAttachments() != null && !logEntry.getAttachments().isEmpty());
-            attachmentsPane.setVisible(logEntry.getAttachments() != null && !logEntry.getAttachments().isEmpty());
-
-            propertiesPane.setExpanded(logEntry.getProperties() != null && !logEntry.getProperties().isEmpty());
-            propertiesPane.setVisible(logEntry.getProperties() != null && !logEntry.getProperties().isEmpty());
-
-            int metaDataCount = logEntry.getLogbooks().size() >= logEntry.getTags().size() ? logEntry.getLogbooks().size() : logEntry.getTags().size();
-            metaDataBox.setPrefHeight(metaDataCount * 60);
-
-            logTags.setVisible(!logEntry.getTags().isEmpty());
-            logTags.setPrefHeight(metaDataCount * 60);
-            LogLogbooks.setVisible(!logEntry.getLogbooks().isEmpty());
-            LogLogbooks.setPrefHeight(metaDataCount * 60);
-
-            logTime.setText(MILLI_FORMAT.format(logEntry.getCreatedDate()));
-
-            logOwner.setText(logEntry.getOwner());
-
-            logTitle.setWrapText(true);
-            logTitle.setText(logEntry.getTitle());
-
-            logDescription.setDisable(true);
-            // Content is defined by the source (default) or description field. If both are null
-            // or empty, do no load any content to the WebView.
-            WebEngine webEngine = logDescription.getEngine();
-            webEngine.setUserStyleSheetLocation(getClass()
-                    .getResource("/detail-log-webview.css").toExternalForm());
-
-
-            webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-                /**
-                 * Attempts to set the height of the web view based on the html content.
-                 * @param arg0
-                 * @param oldState
-                 * @param newState
-                 */
-                @Override
-                public void changed(ObservableValue<? extends State> arg0, State oldState, State newState) {
-                    if (newState == State.SUCCEEDED) {
-                        Object result = webEngine.executeScript(
-                                "document.getElementById('olog').offsetHeight");
-                        if (result instanceof Integer) {
-                            Integer i = (Integer) result;
-                            final double height = Double.valueOf(i) + 20;
-                            Platform.runLater(() -> logDescription.setPrefHeight(height));
-                        }
-                    }
-                }
-            });
-
-            if(logEntry.getSource() != null){
-                webEngine.loadContent(toHtml(logEntry.getSource()));
-            }
-            else if(logEntry.getDescription() != null){
-                webEngine.loadContent(toHtml(logEntry.getDescription()));
-            }
-            ObservableList<String> logbookList = FXCollections.observableArrayList();
-            logbookList.addAll(logEntry.getLogbooks().stream().map(Logbook::getName).collect(Collectors.toList()));
-            LogLogbooks.setItems(logbookList);
-
-            ObservableList<String> tagList = FXCollections.observableArrayList();
-            tagList.addAll(logEntry.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
-            logTags.setItems(tagList);
-
-            ObservableList<File> fileAttachmentList = FXCollections.observableArrayList();
-            fileAttachmentList.setAll(logEntry.getAttachments().stream().map(Attachment::getFile).collect(Collectors.toList()));
-            attachmentsController.setFiles(fileAttachmentList);
-            ObservableList<Image> imagesAttachmentList = FXCollections.observableArrayList();
-            logEntry.getAttachments().stream().forEach(attachment -> {
-                try (FileInputStream fileInputStream = new FileInputStream(attachment.getFile())) {
-                    BufferedImage bufferedImage = ImageIO.read(fileInputStream);
-                    if(bufferedImage != null) {
-                        imagesAttachmentList.add(SwingFXUtils.toFXImage(bufferedImage, null));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            attachmentsController.setImages(imagesAttachmentList);
-
-            if ( !logEntry.getProperties().isEmpty()) {
-                propertiesController.setProperties(logEntry.getProperties());
-            }
+    @FXML
+    public void showHideLogEntryGroup() {
+        if (showHideLogEntryGroupButton.selectedProperty().get()) {
+            currentViewProperty.set(MERGED);
+            mergedLogEntryDisplayController.setLogEntry(logEntryProperty.get());
+        } else {
+            currentViewProperty.set(SINGLE);
         }
     }
 
-    public LogClient getLogClient() {
-        return logClient;
-    }
+    @FXML
+    public void reply() {
+        LogEntry logEntry = logEntryProperty.get();
+        Property logGroupProperty = logEntry.getProperty(LogGroupProperty.NAME);
+        if (logGroupProperty == null) {
+            logGroupProperty = LogGroupProperty.create();
+            logEntry.getProperties().add(logGroupProperty);
+        }
+        OlogLog ologLog = new OlogLog();
+        ologLog.setTitle(logEntry.getTitle());
+        ologLog.setTags(logEntry.getTags());
+        ologLog.setLogbooks(logEntry.getLogbooks());
+        ologLog.setProperties(logEntry.getProperties());
+        ologLog.setLevel(logEntry.getLevel());
 
-    public LogEntry getLogEntry() {
-        return logEntry;
+        // Show a new editor dialog. When user selects to save the reply entry, update the original log entry
+        // to ensure that it contains the log group property.
+        new LogEntryEditorStage(DockPane.getActiveDockPane(), ologLog, l -> {
+            try {
+                // NOTE: source is set to null, while description is set to the log entry source. Reason is that
+                // the description field is the contents of the editor text area in the original log entry. This
+                // is processed on the server such that the description is set as source, while the description is
+                // generated as a plain text variant of the source markup content.
+                ((OlogLog) logEntry).setDescription(logEntry.getSource());
+                ((OlogLog) logEntry).setSource(null);
+                logClient.updateLogEntry(logEntry);
+            } catch (LogbookException e) {
+                logger.log(Level.SEVERE, "Failed to update log entry id=" + logEntry.getId(), e);
+                return;
+            }
+        }).show();
     }
 
     public void setLogEntry(LogEntry logEntry) {
-        this.logEntry = logEntry;
-        refresh();
-    }
-
-    /**
-     * Converts Commonmark content to HTML.
-     * @param commonmarkString Raw Commonmark string
-     * @return The HTML output of the Commonmark processor.
-     */
-    private String toHtml(String commonmarkString){
-        org.commonmark.node.Node document = parser.parse(commonmarkString);
-        String html = htmlRenderer.render(document);
-        // Wrap the content in a named div so that a suitable height may be determined.
-        return "<div id='olog'>\n" + html + "</div>";
-    }
-
-    /**
-     * An {@link AttributeProvider} used to style elements of a log entry. Other types of
-     * attribute processing may be added.
-     */
-    class OlogAttributeProvider implements AttributeProvider {
-
-        /**
-         * Processes image nodes to prepend the service root URL, where needed. For table nodes the olog-table
-         * class is added in order to give it some styling.
-         * @param node The {@link org.commonmark.node.Node} being processed.
-         * @param s The HTML tag, e.g. p, img, strong etc.
-         * @param map Map of attributes for the node.
-         */
-        @Override
-        public void setAttributes(org.commonmark.node.Node node, String s, Map<String, String> map) {
-            if (node instanceof TableBlock) {
-                map.put("class", "olog-table");
-            }
-            // Image paths may be relative (when added through dialog), or absolute URLs (e.g. when added "manually" in editor).
-            // Relative paths must be prepended with service root URL, while absolute URLs must not be changed.
-            if(node instanceof org.commonmark.node.Image){
-                String src = map.get("src");
-                if(!src.toLowerCase().startsWith("http")){
-                    src = LogEntryDisplayController.this.getLogClient().getServiceUrl() + "/" + src;
-                }
-                map.put("src", src);
-            }
+        if(logEntry == null){
+            currentViewProperty.set(EMPTY);
         }
+        else{
+            logEntryProperty.set(logEntry);
+            singleLogEntryDisplayController.setLogEntry(logEntry);
+            currentViewProperty.set(SINGLE);
+            showHideLogEntryGroupButton.selectedProperty().set(false);
+            hasLinkedEntriesProperty.set(logEntry.getProperties()
+                    .stream().anyMatch(p -> p.getName().equals(LogGroupProperty.NAME)));
+        }
+    }
+
+    public LogEntry getLogEntry() {
+        return logEntryProperty.get();
     }
 }

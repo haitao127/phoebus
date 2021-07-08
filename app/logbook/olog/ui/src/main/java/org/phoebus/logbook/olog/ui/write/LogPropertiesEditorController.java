@@ -1,5 +1,6 @@
 package org.phoebus.logbook.olog.ui.write;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -8,37 +9,51 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import javafx.util.converter.DefaultStringConverter;
+import org.phoebus.framework.jobs.JobManager;
+import org.phoebus.logbook.LogClient;
+import org.phoebus.logbook.LogEntry;
+import org.phoebus.logbook.LogService;
+import org.phoebus.logbook.LogbookPreferences;
 import org.phoebus.logbook.Property;
 import org.phoebus.logbook.PropertyImpl;
+import org.phoebus.logbook.olog.ui.LogbookUIPreferences;
 
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class LogPropertiesEditorController {
 
-    // Model
-    private LogEntryModel model;
-    ObservableList<Property> availableProperties = FXCollections.observableArrayList();
-    ObservableList<Property> selectedProperties = FXCollections.observableArrayList();
+    /**
+     * List of properties user may add to log entry. It is constructed from the properties as
+     * provided by the log service, plus optional properties providers, see {@link LogPropertyProvider}.
+     */
+    private ObservableList<Property> availableProperties = FXCollections.observableArrayList();
+    /**
+     * List of properties selected by user to be included in the log record.
+     */
+    private ObservableList<Property> selectedProperties = FXCollections.observableArrayList();
+    /**
+     * List of hidden properties, e.g. properties that are added automatically to the log record,
+     * but that should/must not be rendered in the properties view.
+     */
+    private List<Property> hiddenProperties;
 
     @FXML
     TreeTableView<PropertyTreeNode> selectedPropertiesTree;
@@ -54,24 +69,26 @@ public class LogPropertiesEditorController {
     @FXML
     TableColumn propertyName;
 
-    public LogPropertiesEditorController()
-    {
-    }
+    private List<String> hiddenPropertiesNames = Arrays.asList(LogbookUIPreferences.hidden_properties);
 
-    public LogPropertiesEditorController(LogEntryModel model)
-    {
-        this.model = model;
+    /**
+     *
+     * @param properties A collection of {@link Property}s.
+     */
+    public LogPropertiesEditorController(Collection<Property> properties){
+        // Log entry may already contain properties, so need to handle them accordingly.
+        this.hiddenProperties =
+                properties.stream().filter(p -> hiddenPropertiesNames.contains(p.getName())).collect(Collectors.toList());
+        this.selectedProperties.addAll(
+                properties.stream().filter(p -> !hiddenPropertiesNames.contains(p.getName())).collect(Collectors.toList()));
     }
 
     @FXML
-    public void initialize()
-    {
-        if (this.model != null)
-        {
-            // this.model.fetchProperties();
-            availableProperties = this.model.getProperties();
-            selectedProperties = this.model.getSelectedProperties();
-        }
+    public void initialize() {
+
+        setupProperties();
+        constructTree(selectedProperties);
+
         selectedProperties.addListener((ListChangeListener<Property>) p -> constructTree(selectedProperties));
 
         name.setMaxWidth(1f * Integer.MAX_VALUE * 40);
@@ -90,67 +107,9 @@ public class LogPropertiesEditorController {
                     }
                 });
         value.setEditable(true);
-        value.setCellFactory(new Callback<TreeTableColumn<PropertyTreeNode, String>,
-                                          TreeTableCell<PropertyTreeNode, String>>() {
 
-            @Override
-            public TreeTableCell<PropertyTreeNode, String> call(TreeTableColumn<PropertyTreeNode, String> param) {
-                return new TreeTableCell<PropertyTreeNode, String> () {
-
-                    private TextField textField;
-
-                    @Override
-                    public void startEdit() {
-                        super.startEdit();
-
-                        if (textField == null) {
-                            createTextField();
-                        }
-                        setText(null);
-                        setGraphic(textField);
-                        textField.selectAll();
-                    }
-
-                    @Override
-                    public void cancelEdit() {
-                        super.cancelEdit();
-                        setText((String) getItem());
-                        setGraphic(getTreeTableRow().getGraphic());
-                    }
-
-                    @Override
-                    public void updateItem(String item, boolean empty){
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setText(null);
-                            setGraphic(null);
-                        } else {
-                            try {
-                                URL url = new URL(item);
-                                final Hyperlink link = new Hyperlink(url.toString());
-                                setGraphic(link);
-                            } catch (Exception e) {
-                                setGraphic(new Label(item));
-                            }
-                        }
-                    }
-
-                    private void createTextField() {
-                        textField = new TextField(getString());
-                        textField.setOnKeyReleased((KeyEvent t) -> {
-                            if (t.getCode() == KeyCode.ENTER) {
-                                commitEdit(textField.getText());
-                            } else if (t.getCode() == KeyCode.ESCAPE) {
-                                cancelEdit();
-                            }
-                        });
-                    }
-                    private String getString() {
-                        return getItem() == null ? "" : getItem().toString();
-                    }
-                };
-            }
-        });
+        value.setCellFactory((Callback<TreeTableColumn<PropertyTreeNode, String>, TreeTableCell<PropertyTreeNode, String>>) param ->
+                new TextFieldTreeTableCell<>(new DefaultStringConverter()));
 
         // Hide the headers
         selectedPropertiesTree.widthProperty().addListener(new ChangeListener<Number>() {
@@ -158,7 +117,7 @@ public class LogPropertiesEditorController {
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 // Get the table header
                 Pane header = (Pane) selectedPropertiesTree.lookup("TableHeaderRow");
-                if(header!=null && header.isVisible()) {
+                if (header != null && header.isVisible()) {
                     header.setMaxHeight(0);
                     header.setMinHeight(0);
                     header.setPrefHeight(0);
@@ -177,7 +136,7 @@ public class LogPropertiesEditorController {
         availablePropertiesView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if(event.getClickCount() > 1) {
+                if (event.getClickCount() > 1) {
                     availablePropertySelection();
                 }
             }
@@ -187,11 +146,11 @@ public class LogPropertiesEditorController {
     }
 
     private void constructTree(Collection<Property> properties) {
-        if (properties != null && !properties.isEmpty())
-        {
+        if (properties != null && !properties.isEmpty()) {
             TreeItem root = new TreeItem(new PropertyTreeNode("properties", " "));
             AtomicReference<Double> rowCount = new AtomicReference<>((double) 1);
-            root.getChildren().setAll(properties.stream().map(property -> {
+            root.getChildren().setAll(properties.stream()
+                    .map(property -> {
                 PropertyTreeNode node = new PropertyTreeNode(property.getName(), " ");
                 rowCount.set(rowCount.get() + 1);
                 TreeItem<PropertyTreeNode> treeItem = new TreeItem<>(node);
@@ -208,12 +167,13 @@ public class LogPropertiesEditorController {
     }
 
     /**
-     * @return The list of logentry properties
+     * @return The list of log entry properties
      */
-    public List<Property> getProperties()
-    {
+    public List<Property> getProperties() {
         List<Property> treeProperties = new ArrayList<>();
-        if(selectedPropertiesTree.getRoot() == null){
+        // Add the hidden properties
+        treeProperties.addAll(hiddenProperties);
+        if (selectedPropertiesTree.getRoot() == null) {
             return treeProperties;
         }
         selectedPropertiesTree.getRoot().getChildren().stream().forEach(node -> {
@@ -224,14 +184,6 @@ public class LogPropertiesEditorController {
             treeProperties.add(property);
         });
         return treeProperties;
-    }
-
-    public void setSelectedProperties(List<Property> properties) {
-        selectedProperties.setAll(properties);
-    }
-
-    public void setAvailableProperties(List<Property> properties) {
-        availableProperties.setAll(properties);
     }
 
     /**
@@ -246,8 +198,7 @@ public class LogPropertiesEditorController {
         availableProperties.removeAll(userSelectedProperties);
     }
 
-    private static class PropertyTreeNode
-    {
+    private static class PropertyTreeNode {
         private SimpleStringProperty name;
         private SimpleStringProperty value;
 
@@ -273,14 +224,68 @@ public class LogPropertiesEditorController {
         public String getName() {
             return name.get();
         }
+
         public void setName(String name) {
             this.name.set(name);
         }
+
         public String getValue() {
             return value.get();
         }
+
         public void setValue(String value) {
             this.value.set(value);
         }
     }
+
+    /**
+     * Refreshes the list of available properties. Properties provided by {@link LogPropertyProvider} implementations
+     * are considered first, and then properties available from service. However, adding items to the list of properties
+     * always consider equality, i.e. properties with same name are added only once. SPI implementations should therefore
+     * not support properties with same name, and should not implement properties available from service.
+     *
+     * On top of that, if the user is editing a copy (reply) based on another log entry, a set of properties may
+     * already be present in the new log entry. The list of available properties will not contain such properties
+     * as this would be confusing.
+     *
+     * Also, properties to be excluded as listed in the preferences (properties_excluded_from_view) are not
+     * added to the properties tree.
+     */
+    private void setupProperties(){
+        List<Property> list = new ArrayList<>();
+        // First add properties from SPI implementations
+        List<LogPropertyProvider> factories = new ArrayList<LogPropertyProvider>();
+        ServiceLoader<LogPropertyProvider> loader = ServiceLoader.load(LogPropertyProvider.class);
+        loader.stream().forEach(p -> {
+            if(p.get().getProperty() != null){
+                factories.add(p.get());
+            }
+        });
+        factories.stream()
+                .map(LogPropertyProvider::getProperty)
+                .forEach(property -> {
+                    // Do not add a property that
+                    if(!selectedProperties.contains(property)){
+                        list.add(property);
+                    }
+                });
+
+        JobManager.schedule("Fetch Properties from service", monitor ->
+        {
+            LogClient logClient =
+                    LogService.getInstance().getLogFactories().get(LogbookPreferences.logbook_factory).getLogClient();
+            List<Property> propertyList = logClient.listProperties().stream().collect(Collectors.toList());
+            Platform.runLater(() ->
+            {
+                propertyList.forEach(property -> {
+                    if (!selectedProperties.contains(property) && !list.contains(property)) {
+                        list.add(property);
+                    }
+                });
+                availableProperties.setAll(list);
+            });
+        });
+    }
+
+
 }

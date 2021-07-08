@@ -12,10 +12,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -27,6 +29,7 @@ import jfxtras.scene.control.agenda.Agenda;
 import jfxtras.scene.control.agenda.Agenda.Appointment;
 import jfxtras.scene.control.agenda.Agenda.AppointmentGroup;
 import jfxtras.scene.control.agenda.Agenda.AppointmentImplLocal;
+import org.phoebus.framework.nls.NLS;
 import org.phoebus.logbook.LogClient;
 import org.phoebus.logbook.LogEntry;
 import org.phoebus.ui.time.TimeRelativeIntervalPane;
@@ -34,12 +37,14 @@ import org.phoebus.util.time.TimeParser;
 import org.phoebus.util.time.TimeRelativeInterval;
 import org.phoebus.util.time.TimestampFormats;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -113,14 +118,33 @@ public class LogEntryCalenderViewController extends LogbookSearchController {
                 if (map != null) {
                     final Stage dialog = new Stage();
                     dialog.initModality(Modality.NONE);
-
+                    ResourceBundle resourceBundle = NLS.getMessages(Messages.class);
                     FXMLLoader loader = new FXMLLoader();
+                    loader.setResources(resourceBundle);
                     loader.setLocation(this.getClass().getResource("LogEntryDisplay.fxml"));
+                    loader.setControllerFactory(clazz -> {
+                        try {
+                            if (clazz.isAssignableFrom(SingleLogEntryDisplayController.class)) {
+                                return clazz.getConstructor(String.class).newInstance(getClient().getServiceUrl());
+                            }
+                            else if(clazz.isAssignableFrom(AttachmentsPreviewController.class)){
+                                return clazz.getConstructor().newInstance();
+                            }
+                            else if(clazz.isAssignableFrom(LogEntryDisplayController.class)){
+                                return clazz.getConstructor(LogClient.class).newInstance(getClient());
+                            }
+                            else if(clazz.isAssignableFrom(LogPropertiesController.class)){
+                                return clazz.getConstructor().newInstance();
+                            }
+                        } catch (Exception e) {
+                            logger.log(Level.SEVERE, "Failed to construct controller for log entry display", e);
+                        }
+                        return null;
+                    });
                     loader.load();
                     LogEntryDisplayController controller = loader.getController();
                     controller.setLogEntry(map.get(appointment));
-                    VBox root = loader.getRoot();
-                    Scene dialogScene = new Scene(root, 300, 200);
+                    Scene dialogScene = new Scene(loader.getRoot(), 800, 600);
                     dialog.setScene(dialogScene);
                     dialog.show();
                 }
@@ -139,7 +163,11 @@ public class LogEntryCalenderViewController extends LogbookSearchController {
 
         try {
             String styleSheetResource = LogbookUIPreferences.calendar_view_item_stylesheet;
-            agenda.getStylesheets().add(this.getClass().getResource(styleSheetResource).toString());
+            URL url = this.getClass().getResource(styleSheetResource);
+            // url may be null...
+            if(url != null){
+                agenda.getStylesheets().add(this.getClass().getResource(styleSheetResource).toString());
+            }
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed to set css style", e);
         }
@@ -150,11 +178,13 @@ public class LogEntryCalenderViewController extends LogbookSearchController {
         AnchorPane.setRightAnchor(agenda, 6.0);
         agendaPane.getChildren().add(agenda);
 
-        searchParameters = FXCollections.<Keys, String>observableHashMap();
-        searchParameters.put(Keys.SEARCH, "*");
-        searchParameters.put(Keys.STARTTIME, TimeParser.format(java.time.Duration.ofHours(8)));
-        searchParameters.put(Keys.ENDTIME, TimeParser.format(java.time.Duration.ZERO));
+        searchParameters = FXCollections.observableHashMap();
+
+        LogbookQueryUtil.parseQueryString(LogbookUIPreferences.default_logbook_query).entrySet().stream().forEach(entry -> {
+            searchParameters.put(Keys.findKey(entry.getKey()), entry.getValue());
+        });
         advancedSearchViewController.setSearchParameters(searchParameters);
+
 
         searchParameters.addListener(new MapChangeListener<Keys, String>() {
             @Override

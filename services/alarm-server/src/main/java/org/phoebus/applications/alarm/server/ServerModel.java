@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Oak Ridge National Laboratory.
+ * Copyright (c) 2018-2021 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,12 +170,20 @@ class ServerModel
                     {   // No config -> Delete node
                         final AlarmTreeItem<?> node = deleteNode(path);
                         if (node != null)
-                            stopPVs(node);
+                            stopDeletedPVs(node);
+                        // else: Deletion message for node we never created
                     }
                     else
                     {
                         // Get node_config as JSON map to check for "pv" key
                         final Object json = JsonModelReader.parseJsonText(node_config);
+
+                        // Ignore 'delete' messages because they don't update the config
+                        // and would result in superfluous PV stop() and re-start().
+                        // The follow-up message with config == null will actually delete the AlarmServerPV
+                        if (JsonModelReader.isConfigDeletion(json))
+                            continue;
+
                         AlarmTreeItem<?> node = findNode(path);
 
                         // New node? Create it.
@@ -302,9 +310,16 @@ class ServerModel
             {   // Done when creating leaf
                 // Use the known initial state, but only once (remove from map)
                 if (last &&  is_leaf)
-                    return new AlarmServerPV(this, parent, name, initial_states.remove(path));
+                {
+                    final AlarmServerPV pv = new AlarmServerPV(this, parent.getPathName(), name, initial_states.remove(path));
+                    pv.addToParent(parent);
+                    return pv;
+                }
                 else
-                    node = new AlarmServerNode(this, parent, name);
+                {
+                    node = new AlarmServerNode(this, parent.getPathName(), name);
+                    node.addToParent(parent);
+                }
             }
             // Reached desired node?
             if (last)
@@ -353,14 +368,18 @@ class ServerModel
     /** Stop PVs in a subtree of the alarm hierarchy
      *  @param node Node where to start
      */
-    private void stopPVs(final AlarmTreeItem<?> node)
+    private void stopDeletedPVs(final AlarmTreeItem<?> node)
     {
-        // If this was a known PV, notify listener
         if (node instanceof AlarmServerPV)
+        {
+            // Stop the PV, i.e. no longer react to value updates
             ((AlarmServerPV) node).stop();
+            // Send a null "tombstone" status update
+            sendStateUpdate(node.getPathName(), null);
+        }
         else
             for (AlarmTreeItem<?> child : node.getChildren())
-                stopPVs(child);
+                stopDeletedPVs(child);
     }
 
     /** Send alarm update to 'state' topic

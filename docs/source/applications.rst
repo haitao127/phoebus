@@ -6,6 +6,7 @@ The following sections describe details of specific application features.
 
 .. toctree::
    :maxdepth: 1
+<<<<<<< HEAD
    
    core/formula/doc/index
    core/pv/doc/index
@@ -27,3 +28,7 @@ The following sections describe details of specific application features.
    app/pvtree/doc/index
    app/save-and-restore/ui/doc/index
    app/update/doc/index
+=======
+
+   application_links
+>>>>>>> cef0c56d1c1ce535d43c83399faa25e9e26d2d3b

@@ -19,108 +19,257 @@
 
 package org.phoebus.logbook.olog.ui.write;
 
-import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import org.phoebus.framework.jobs.JobManager;
+import org.phoebus.logbook.Attachment;
+import org.phoebus.logbook.LogEntry;
+import org.phoebus.logbook.olog.ui.AttachmentsPreviewController;
 import org.phoebus.logbook.olog.ui.Messages;
-import org.phoebus.ui.javafx.FilesTab;
-import org.phoebus.ui.javafx.ImagesTab;
+import org.phoebus.olog.es.api.model.OlogAttachment;
+import org.phoebus.ui.dialog.DialogHelper;
+import org.phoebus.ui.docking.DockPane;
+import org.phoebus.ui.javafx.ImageCache;
+import org.phoebus.ui.javafx.Screenshot;
 
+import javax.activation.MimetypesFileTypeMap;
+import javax.imageio.ImageIO;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class AttachmentsViewController {
 
     @FXML
-    private TitledPane titledPane;
+    private Button removeButton;
 
     @FXML
-    private TabPane tabPane;
+    private Button embedSelectedButton;
 
-    private ImagesTab imagesTab;
-    private FilesTab filesTab;
-    private Node parent;
-    private List<Image> images;
-    private List<File> files;
-    private boolean autoExpand;
+    @FXML
+    private VBox root;
 
-    public AttachmentsViewController(Node parent, List<Image> images, List<File> files, Boolean autoExpand){
-        this.parent = parent;
-        this.images = images;
-        this.files = files;
-        this.autoExpand = autoExpand;
-    }
+    private TextArea textArea;
 
-    public AttachmentsViewController(Node parent, Boolean autoExpand){
-        this.parent = parent;
-        this.autoExpand = autoExpand;
-        this.images = new ArrayList<>();
-        this.files = new ArrayList<>();
+    @FXML
+    private AttachmentsPreviewController attachmentsPreviewController;
+
+    private final Logger logger = Logger.getLogger(AttachmentsViewController.class.getName());
+
+    /**
+     * List of all attachments to be persisted in the log entry.
+     */
+    private ObservableList<Attachment> attachments = FXCollections.observableArrayList();
+    private SimpleBooleanProperty imageAttachmentSelected = new SimpleBooleanProperty(false);
+    /**
+     * List of attachments corresponding to (temporary) files that must be deleted when
+     * log entry has been successfully persisted.
+     */
+    private List<Attachment> attachmentsToDelete = new ArrayList<>();
+
+    /**
+     * @param logEntry The log entry template potentially holding a set of attachments. Note
+     *                 that files associated with these attachments are considered temporary and
+     *                 are subject to removal when the log entry has been committed.
+     */
+    public AttachmentsViewController(LogEntry logEntry) {
+        attachments.addAll(logEntry.getAttachments());
+        attachmentsToDelete.addAll(logEntry.getAttachments());
     }
 
     @FXML
-    public void initialize(){
+    public void initialize() {
 
-        localize();
+        removeButton.setGraphic(ImageCache.getImageView(ImageCache.class, "/icons/delete.png"));
+        removeButton.disableProperty().bind(Bindings.isEmpty(attachmentsPreviewController.getSelectedAttachments()));
+        attachmentsPreviewController.setAttachments(attachments);
 
-        imagesTab = new ImagesTab();
-        imagesTab.setSnapshotNode(parent.getScene().getRoot());
-        imagesTab.setImages(images);
+        attachmentsPreviewController.addListSelectionChangeListener(change -> {
+            // Enable "Embed Selected" button only if exactly one image attachment is selected.
+            imageAttachmentSelected.set(attachmentsPreviewController.getSelectedAttachments().size() == 1 &&
+                    attachmentsPreviewController.getSelectedAttachments().get(0).getContentType().toLowerCase().startsWith("image"));
+        });
 
-        filesTab = new FilesTab();
-        filesTab.setFiles(files);
+        embedSelectedButton.disableProperty().bind(imageAttachmentSelected.not());
+    }
 
-        tabPane.getTabs().add(0, imagesTab);
-        tabPane.getTabs().add(1, filesTab);
+    @FXML
+    public void addFiles() {
+        final FileChooser addImageDialog = new FileChooser();
+        addImageDialog.setInitialDirectory(new File(System.getProperty("user.home")));
+        final List<File> files = addImageDialog.showOpenMultipleDialog(root.getParent().getScene().getWindow());
+        if (files == null) { // User cancels file selection
+            return;
+        }
+        addFiles(files);
+    }
 
-        tabPane.getSelectionModel().selectFirst();
+    @FXML
+    public void addCssWindow() {
+        Image image = Screenshot.imageFromNode(DockPane.getActiveDockPane());
+        addImage(image);
+    }
 
-        // Open/close the attachments pane if there's something to see resp. not
-        if(autoExpand && (!this.images.isEmpty() || !this.files.isEmpty())){
-            Platform.runLater(() ->
-            {
-                titledPane.setExpanded(true);
-            });
+    @FXML
+    public void addClipboardContent() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (clipboard.hasFiles()) {
+            addFiles(clipboard.getFiles());
+        } else if (clipboard.hasImage()) {
+            Image image = clipboard.getImage();
+            addImage(image);
+        } else {
+            final Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setHeaderText(Messages.NoClipboardContent);
+            DialogHelper.positionDialog(alert, root.getParent(), -300, -200);
+            alert.showAndWait();
         }
     }
 
-    public void setImages(ObservableList<Image> images){
-        imagesTab.setImages(images);
-        if(autoExpand && !images.isEmpty()) {
-            Platform.runLater(() ->
-            {
-                titledPane.setExpanded(true);
-            });
+    @FXML
+    public void removeFiles() {
+        List<Attachment> attachmentsToRemove =
+                attachmentsPreviewController.getSelectedAttachments().stream().collect(Collectors.toList());
+        attachmentsToRemove.forEach(a -> {
+            if (a.getContentType().startsWith("image")) {
+                String markup = textArea.getText();
+                if(markup != null){
+                    String newMarkup = removeImageMarkup(markup, a.getId());
+                    textArea.textProperty().set(newMarkup);
+                }
+            }
+            attachments.remove(a);
+        });
+    }
+
+    @FXML
+    public void embedImage() {
+        EmbedImageDialog embedImageDialog = new EmbedImageDialog();
+        Optional<EmbedImageDescriptor> descriptor = embedImageDialog.showAndWait();
+        if (descriptor.isPresent()) {
+            String id = UUID.randomUUID().toString();
+            addEmbeddedImageMarkup(id, descriptor.get().getWidth(), descriptor.get().getHeight());
+            addImage(descriptor.get().getImage(), id);
         }
     }
 
-    public void setFiles(ObservableList<File> files){
-        filesTab.setFiles(files);
-        if(autoExpand && !files.isEmpty()) {
-            Platform.runLater(() ->
-            {
-                titledPane.setExpanded(true);
-            });
+    @FXML
+    public void embedSelected() {
+        // Just in case... launch dialog only if the first item in the selection is an image
+        if (attachmentsPreviewController.getSelectedAttachments().get(0).getContentType().toLowerCase().startsWith("image")) {
+            EmbedImageDialog embedImageDialog = new EmbedImageDialog();
+            embedImageDialog.setFile(attachmentsPreviewController.getSelectedAttachments().get(0).getFile());
+            Optional<EmbedImageDescriptor> descriptor = embedImageDialog.showAndWait();
+            if (descriptor.isPresent()) {
+                String id = UUID.randomUUID().toString();
+                attachmentsPreviewController.getSelectedAttachments().get(0).setId(id);
+                addEmbeddedImageMarkup(id, descriptor.get().getWidth(), descriptor.get().getHeight());
+            }
         }
     }
 
-    private void localize(){
-        titledPane.setText(Messages.Attachments);
+    public List<Attachment> getAttachments() {
+        return attachments;
     }
 
-    public List<Image> getImages()
-    {
-        return imagesTab.getImages();
+    public void deleteTemporaryFiles() {
+        JobManager.schedule("Delete temporary attachment files", monitor -> {
+            attachmentsToDelete.stream().forEach(a -> {
+                logger.log(Level.INFO, "Deleting temporary attachment file " + a.getFile().getAbsolutePath());
+                a.getFile().delete();
+            });
+        });
     }
 
-    public List<File> getFiles()
-    {
-        return filesTab.getFiles();
+    private void addEmbeddedImageMarkup(String id, int width, int height) {
+        // Insert markup at caret position. At this point an id must be set.
+        int caretPosition = textArea.getCaretPosition();
+        String imageMarkup =
+                "![](attachment/" + id + ")"
+                        + "{width=" + width
+                        + " height=" + height + "} ";
+        textArea.insertText(caretPosition, imageMarkup);
     }
 
+    protected String removeImageMarkup(String markup, String imageId) {
+        int index = markup.indexOf(imageId);
+        if (index == -1) {
+            return markup;
+        }
+
+        String stringBefore = markup.substring(0, index);
+        String stringAfter = markup.substring(index + imageId.length());
+
+        int exclamationMarkIndex = stringBefore.lastIndexOf('!');
+        int closingCurlyBraceIndex = stringAfter.indexOf('}');
+
+        return markup.substring(0, exclamationMarkIndex) +
+                markup.substring((stringBefore + imageId).length() + closingCurlyBraceIndex + 1);
+    }
+
+    /**
+     * Sets a reference to the edit text area such that generated markup for embedded image can be added.
+     * TODO: this is a bit ugly, it would maybe better to merge fxmls into a single layout and controller.
+     *
+     * @param textArea
+     */
+    public void setTextArea(TextArea textArea) {
+        this.textArea = textArea;
+    }
+
+    private void addFiles(List<File> files) {
+        MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
+        for (File file : files) {
+            OlogAttachment ologAttachment = new OlogAttachment();
+            ologAttachment.setFile(file);
+            ologAttachment.setFileName(file.getName());
+            String mimeType = fileTypeMap.getContentType(file.getName());
+            if (mimeType.startsWith("image")) {
+                ologAttachment.setContentType("image");
+            } else {
+                ologAttachment.setContentType("file");
+            }
+            attachments.add(ologAttachment);
+        }
+    }
+
+    private void addImage(Image image) {
+        addImage(image, UUID.randomUUID().toString());
+    }
+
+    private void addImage(Image image, String id) {
+        try {
+            File imageFile = new File(System.getProperty("java.io.tmpdir"), id + ".png");
+            imageFile.deleteOnExit();
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", imageFile);
+            OlogAttachment ologAttachment = new OlogAttachment(id);
+            ologAttachment.setContentType("image");
+            ologAttachment.setFile(imageFile);
+            ologAttachment.setFileName(imageFile.getName());
+            attachments.add(ologAttachment);
+            attachmentsToDelete.add(ologAttachment);
+        } catch (IOException e) {
+            Logger.getLogger(AttachmentsViewController.class.getName())
+                    .log(Level.INFO, "Unable to create temp file from clipboard image or embedded image", e);
+        }
+    }
 }

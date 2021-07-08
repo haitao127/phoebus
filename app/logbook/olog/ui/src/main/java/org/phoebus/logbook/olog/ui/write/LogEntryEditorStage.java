@@ -25,9 +25,12 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.phoebus.framework.nls.NLS;
+import org.phoebus.logbook.LogClient;
+import org.phoebus.logbook.LogEntry;
+import org.phoebus.logbook.olog.ui.AttachmentsPreviewController;
 import org.phoebus.logbook.olog.ui.Messages;
 
-import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -35,15 +38,25 @@ import java.util.logging.Logger;
 
 public class LogEntryEditorStage extends Stage
 {
+    /**
+     * A stand-alone window containing components needed to create a logbook entry.
+     * @param parent The {@link Node} from which the user - through context menu or application menu - requests a new
+     *               logbook entry.
+     * @param logEntry Pre-populated data for the log entry, e.g. date and (optionally) screen shot.
+     */
+    public LogEntryEditorStage(Node parent, LogEntry logEntry)
+    {
+        this(parent, logEntry, null);
+    }
 
     /**
      * A stand-alone window containing components needed to create a logbook entry.
      * @param parent The {@link Node} from which the user - through context menu or application menu - requests a new
      *               logbook entry.
-     * @param logEntryModel Pre-populated data for the log entry, e.g. date and (optionally) screen shot.
-     * @param completionHandler If non-null, called when the submission to the logbook service has completed.
+     * @param logEntry Pre-populated data for the log entry, e.g. date and (optionally) screen shot.
+     * @param completionHandler A completion handler called when service call completes.
      */
-    public LogEntryEditorStage(Node parent, LogEntryModel logEntryModel, LogEntryCompletionHandler completionHandler)
+    public LogEntryEditorStage(Node parent, LogEntry logEntry, LogEntryCompletionHandler completionHandler)
     {
         initModality(Modality.WINDOW_MODAL);
         ResourceBundle resourceBundle =  NLS.getMessages(Messages.class);
@@ -52,19 +65,22 @@ public class LogEntryEditorStage extends Stage
         fxmlLoader.setControllerFactory(clazz -> {
             try {
                 if(clazz.isAssignableFrom(LogEntryEditorController.class)){
-                    return clazz.getConstructor(Node.class, LogEntryModel.class, LogEntryCompletionHandler.class)
-                            .newInstance(parent, logEntryModel, completionHandler);
+                    return clazz.getConstructor(Node.class, LogEntryCompletionHandler.class)
+                            .newInstance(parent, completionHandler);
                 }
                 else if(clazz.isAssignableFrom(FieldsViewController.class)){
-                    return clazz.getConstructor(LogEntryModel.class)
-                            .newInstance(logEntryModel);
+                    return clazz.getConstructor(LogEntry.class)
+                            .newInstance(logEntry);
                 }
                 else if(clazz.isAssignableFrom(AttachmentsViewController.class)){
-                    return clazz.getConstructor(Node.class, List.class, List.class, Boolean.class)
-                                    .newInstance(parent, logEntryModel.getImages(), logEntryModel.getFiles(), true);
+                    return clazz.getConstructor(LogEntry.class)
+                                    .newInstance(logEntry);
+                }
+                else if(clazz.isAssignableFrom(AttachmentsPreviewController.class)){
+                    return clazz.getConstructor().newInstance();
                 }
                 else if(clazz.isAssignableFrom(LogPropertiesEditorController.class)) {
-                    return clazz.getConstructor(LogEntryModel.class).newInstance(logEntryModel);
+                    return clazz.getConstructor(Collection.class).newInstance(logEntry.getProperties());
                 }
             } catch (Exception e) {
                 Logger.getLogger(LogEntryEditorStage.class.getName()).log(Level.SEVERE, "Failed to construct controller for log editor UI", e);
@@ -75,7 +91,7 @@ public class LogEntryEditorStage extends Stage
         try {
             fxmlLoader.load();
         } catch (
-                IOException exception) {
+                Exception exception) {
             Logger.getLogger(LogEntryEditorStage.class.getName()).log(Level.WARNING, "Unable to load fxml for log entry editor UI", exception);
         }
 

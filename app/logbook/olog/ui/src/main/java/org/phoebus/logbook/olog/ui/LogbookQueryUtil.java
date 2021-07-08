@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,23 +26,44 @@ public class LogbookQueryUtil {
         ENDTIME("end"),
         AUTHOR("owner"),
         TITLE("title"),
-        LEVEL("level");
-        private final String name;
+        LEVEL("level"),
+        PROPERTIES("properties");
 
-        private Keys(String name) {
+        // The human readable name of the query key
+        private final String name;
+        // A lookuptable for finding the Keys constant that matches the human readable query key
+        private static Map<String, Keys> lookupTable = new HashMap<String, Keys>();
+        static {
+            lookupTable.put("desc", Keys.SEARCH);
+            lookupTable.put("logbooks", Keys.LOGBOOKS);
+            lookupTable.put("tags", Keys.TAGS);
+            lookupTable.put("start", Keys.STARTTIME);
+            lookupTable.put("end", Keys.ENDTIME);
+            lookupTable.put("owner", Keys.AUTHOR);
+            lookupTable.put("title", Keys.TITLE);
+            lookupTable.put("level", Keys.LEVEL);
+            lookupTable.put("properties", Keys.PROPERTIES);
+        }
+
+        Keys(String name) {
             this.name = name;
-        };
+        }
 
         public String getName() {
             return this.name;
         }
 
-        @Override
-        public String toString() {
-            return this.toString();
+        public static Keys findKey(String keyName) {
+            return lookupTable.get(keyName);
         }
-    }
 
+    }
+    /**
+     * This method parses a logbook query URI and returns a map of search keys and their assocaited search patterns as
+     * values
+     * @param query the logbook query URI
+     * @return a map consisting of search keys and patterns
+     */
     public static Map<String, String> parseQueryURI(URI query) {
         if (Strings.isNullOrEmpty(query.getQuery())) {
             return Collections.emptyMap();
@@ -51,12 +73,36 @@ public class LogbookQueryUtil {
         }
     }
 
+    /**
+     * This method parses a logbook query string and returns a map of search keys and their assocaited search patterns as
+     * values.
+     * The use of temporal descriptors like "1 day" etc are resolved to Unix time.
+     * @param query the logbook query string
+     * @return a map consisting of search keys and patterns
+     */
     public static Map<String, String> parseQueryString(String query) {
         if (Strings.isNullOrEmpty(query)) {
             return Collections.emptyMap();
         } else {
             return Arrays.asList(query.split("&")).stream()
                     .collect(Collectors.toMap(new KeyParser(), new ValueParser()));
+        }
+    }
+
+    /**
+     * This method parses a logbook query string and returns a map of search keys and their assocaited search patterns as
+     * values.
+     * Temporal descriptors like "1 day" etc are not converted to unix time.
+     * This method is primarily intended as a helper for UI controls.
+     * @param query the logbook query string
+     * @return a map consisting of search keys and patterns
+     */
+    public static Map<String, String> parseHumanReadableQueryString(String query) {
+        if (Strings.isNullOrEmpty(query)) {
+            return Collections.emptyMap();
+        } else {
+            return Arrays.asList(query.split("&")).stream()
+                    .collect(Collectors.toMap(new KeyParser(), new SimpleValueParser()));
         }
     }
 
@@ -90,6 +136,20 @@ public class LogbookQueryUtil {
                     }
                 }
                 return value;
+            } else {
+                return "*";
+            }
+        }
+
+    }
+
+    private static class SimpleValueParser implements Function<String, String> {
+
+        @Override
+        public String apply(String t) {
+
+            if (t.contains("=")) {
+                return t.split("=")[1];
             } else {
                 return "*";
             }
