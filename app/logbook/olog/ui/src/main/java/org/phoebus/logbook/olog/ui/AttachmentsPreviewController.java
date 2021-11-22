@@ -19,39 +19,38 @@
 package org.phoebus.logbook.olog.ui;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import org.phoebus.framework.jobs.JobManager;
-import org.phoebus.framework.util.IOUtils;
+import org.phoebus.framework.workbench.ApplicationService;
 import org.phoebus.logbook.Attachment;
 import org.phoebus.logbook.olog.ui.write.AttachmentsViewController;
+import org.phoebus.ui.application.ApplicationLauncherService;
 import org.phoebus.ui.dialog.ExceptionDetailsErrorDialog;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -75,9 +74,6 @@ public class AttachmentsPreviewController {
     private ImageView imagePreview;
 
     @FXML
-    private TextArea textPreview;
-
-    @FXML
     private GridPane noPreviewPane;
 
     @FXML
@@ -88,12 +84,13 @@ public class AttachmentsPreviewController {
      */
     private ObservableList<Attachment> selectedAttachments = FXCollections.observableArrayList();
 
+    private SimpleObjectProperty<Attachment> selectedAttachment = new SimpleObjectProperty();
+
     /**
      * List of listeners that will be notified when user has selected one or multiple attachments in
      * the {@link ListView}.
      */
     private List<ListChangeListener<Attachment>> listSelectionChangeListeners = new ArrayList<>();
-
 
     @FXML
     public void initialize() {
@@ -109,7 +106,26 @@ public class AttachmentsPreviewController {
              */
             @Override
             public void changed(ObservableValue<? extends Attachment> observable, Attachment oldValue, Attachment newValue) {
-                showPreview(newValue);
+                selectedAttachment.set(newValue);
+                showPreview();
+            }
+        });
+
+        attachmentListView.setOnMouseClicked(me -> {
+            if (me.getClickCount() == 2) {
+                Attachment attachment = attachmentListView.getSelectionModel()
+                        .getSelectedItem();
+                if(!attachment.getContentType().startsWith("image")){
+                    // If there is no external app configured for the file type, show an error message and return.
+                    String fileName = attachment.getFile().getName();
+                    String[] parts = fileName.split("\\.");
+                    if(parts.length == 1 || !ApplicationService.getExtensionsHandledByExternalApp().contains(parts[parts.length - 1])){
+                        ExceptionDetailsErrorDialog.openError(Messages.PreviewOpenErrorTitle, Messages.PreviewOpenErrorBody, null);
+                        return;
+                    }
+                }
+                ApplicationLauncherService.openFile(attachment.getFile(),
+                        false, null);
             }
         });
 
@@ -134,6 +150,21 @@ public class AttachmentsPreviewController {
 
         imagePreview.fitWidthProperty().bind(previewPane.widthProperty());
         imagePreview.fitHeightProperty().bind(previewPane.heightProperty());
+        imagePreview.hoverProperty().addListener((event) -> {
+            if (((ReadOnlyBooleanProperty) event).get()) {
+                splitPane.getScene().setCursor(Cursor.HAND);
+            } else {
+                splitPane.getScene().setCursor(Cursor.DEFAULT);
+            }
+        });
+
+        imagePreview.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (selectedAttachment.get() != null && selectedAttachment.get().getContentType().startsWith("image")) {
+                ApplicationLauncherService.openFile(selectedAttachment.get().getFile(),
+                        false, null);
+            }
+            event.consume();
+        });
     }
 
     public ObservableList<Attachment> getSelectedAttachments() {
@@ -166,6 +197,10 @@ public class AttachmentsPreviewController {
                 }
             }
         });
+        // Automatically select first attachment.
+        if (attachments != null && attachments.size() > 0) {
+            attachmentListView.getSelectionModel().select(attachments.get(0));
+        }
     }
 
     private class AttachmentRow extends ListCell<Attachment> {
@@ -182,64 +217,39 @@ public class AttachmentsPreviewController {
 
     /**
      * Shows selected attachment in preview pane.
-     *
-     * @param attachment
      */
-    private void showPreview(Attachment attachment) {
-        if (attachment == null) {
+    private void showPreview() {
+        if (selectedAttachment.get() == null) {
             imagePreview.visibleProperty().setValue(false);
-            textPreview.visibleProperty().setValue(false);
             return;
         }
-        if (attachment.getContentType().startsWith("image")) {
-            showImagePreview(attachment);
+        if (selectedAttachment.get().getContentType().startsWith("image")) {
+            showImagePreview(selectedAttachment.get());
         } else {
-            // Other file types...
-            // Need some file content detection here (Apache Tika?) to determine if the file is
-            // plain text and thus possible to preview in a TextArea.
-            showFilePreview(attachment);
+            imagePreview.visibleProperty().setValue(false);
+            noPreviewPane.visibleProperty().setValue(true);
         }
     }
 
     /**
      * Shows image preview in preview pane. The size of the {@link ImageView} is calculated based on
      * the size of the preview pane and the actual image size such that the complete image is always shown.
-     * TODO: Viewing the image in original resolution should be implemented as a separate action, e.g. double
-     * click image attachment in list.
      *
      * @param attachment
      */
     private void showImagePreview(Attachment attachment) {
         try {
             BufferedImage bufferedImage = ImageIO.read(attachment.getFile());
+            // BufferedImage may be null due to lazy loading strategy.
+            if (bufferedImage == null) {
+                return;
+            }
             Image image = SwingFXUtils.toFXImage(bufferedImage, null);
             imagePreview.visibleProperty().setValue(true);
-            textPreview.visibleProperty().setValue(false);
             imagePreview.setImage(image);
         } catch (IOException ex) {
             Logger.getLogger(AttachmentsViewController.class.getName())
                     .log(Level.SEVERE, "Unable to load image file " + attachment.getFile().getAbsolutePath(), ex);
-        }
-    }
-
-    /**
-     * Shows a file attachment that is not an image, e.g. text.
-     * TODO: Some kind of file content detection (Apache Tika?) should be used to determine if preview makes sense.
-     *
-     * @param attachment
-     */
-    private void showFilePreview(Attachment attachment) {
-        imagePreview.visibleProperty().setValue(false);
-        noPreviewPane.visibleProperty().setValue(false);
-        final ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            IOUtils.copy(new FileInputStream(attachment.getFile()), result);
-            String content = new String(result.toByteArray());
-            textPreview.textProperty().set(content);
-            textPreview.visibleProperty().setValue(true);
-        } catch (IOException e) {
-            Logger.getLogger(AttachmentsViewController.class.getName())
-                    .log(Level.SEVERE, "Unable to read file " + attachment.getFile().getAbsolutePath(), e);
         }
     }
 

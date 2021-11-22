@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.phoebus.util.time.TimestampFormats.MILLI_FORMAT;
 
 /**
@@ -27,6 +28,11 @@ public class QueryParserTest {
         expectedMap.put("desc", "*Fault*Motor*");
         expectedMap.put("tag", "operation");
         assertEquals(expectedMap, queryParameters);
+
+        // Also test empty query
+        uri = URI.create("logbook://?");
+        queryParameters = LogbookQueryUtil.parseQueryURI(uri);
+        assertTrue(queryParameters.isEmpty());
 
     }
 
@@ -62,5 +68,36 @@ public class QueryParserTest {
     public void multiValueTest() {
         URI uri = URI.create("logbook://?desc=*Fault*Motor*&tag=operation&tag=loto");
         Map<String, String> queryParameters = LogbookQueryUtil.parseQueryURI(uri);
+    }
+
+    @Test
+    public void testDetermineSortOrder(){
+        String query = "a=b&C=D";
+        String modifiedQuery = LogbookQueryUtil.addSortOrder(query, false);
+        assertEquals("a=b&C=D&sort=down", modifiedQuery);
+
+        modifiedQuery = LogbookQueryUtil.addSortOrder(query, true);
+        assertEquals("a=b&C=D&sort=up", modifiedQuery);
+
+        query = "a=b&sort=up&C=D";
+        modifiedQuery = LogbookQueryUtil.addSortOrder(query, false);
+        assertEquals("a=b&C=D&sort=down", modifiedQuery);
+
+        query = "a=b&sort&C=D";
+        modifiedQuery = LogbookQueryUtil.addSortOrder(query, false);
+        assertEquals("a=b&C=D&sort=down", modifiedQuery);
+
+        query = "a=b&sort=down&C=D";
+        modifiedQuery = LogbookQueryUtil.addSortOrder(query, true);
+        assertEquals("a=b&C=D&sort=up", modifiedQuery);
+
+        // Also test empty query
+        query = "";
+        modifiedQuery = LogbookQueryUtil.addSortOrder(query, true);
+        assertEquals("sort=up", modifiedQuery);
+
+        query = null;
+        modifiedQuery = LogbookQueryUtil.addSortOrder(query, true);
+        assertEquals("sort=up", modifiedQuery);
     }
 }

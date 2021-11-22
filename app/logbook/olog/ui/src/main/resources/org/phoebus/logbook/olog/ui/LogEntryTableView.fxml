@@ -2,59 +2,106 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <SplitPane fx:id="topLevelNode" dividerPositions="0.6105960264900663" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.phoebus.logbook.olog.ui.LogEntryTableViewController">
     <items>
         <fx:include fx:id="advancedSearchView" source="AdvancedSearchView.fxml" />
-      <SplitPane dividerPositions="0.33" prefHeight="160.0" prefWidth="200.0">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="250.0" prefWidth="600.0">
-               <children>
-                    <GridPane fx:id="ViewSearchPane" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <columnConstraints>
-                            <ColumnConstraints minWidth="10.0" />
-                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                            <ColumnConstraints minWidth="10.0" prefWidth="60" />
-                            <ColumnConstraints minWidth="10.0" prefWidth="60" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                        </rowConstraints>
-                        <children>
-                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" text="Query: " GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
-                           <padding>
+        <SplitPane dividerPositions="0.33" prefHeight="160.0" prefWidth="200.0">
+            <items>
+                <AnchorPane minHeight="0.0" minWidth="250.0" prefWidth="600.0">
+                    <children>
+                        <GridPane fx:id="ViewSearchPane" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="10.0" />
+                                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                                <ColumnConstraints minWidth="10.0" prefWidth="60.0" />
+                                <ColumnConstraints />
+                                <ColumnConstraints />
+                                <ColumnConstraints />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints prefHeight="35.0" />
+                                <RowConstraints />
+                        <RowConstraints />
+                            </rowConstraints>
+                            <children>
+                                <Button fx:id="resize" mnemonicParsing="false" onMouseClicked="#resize" text="&gt;" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+                           <GridPane.margin>
                               <Insets left="5.0" />
-                           </padding>
-                        </Label>
-                            <TextField fx:id="query" onAction="#updateQuery" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" HBox.hgrow="ALWAYS">
-                                <GridPane.margin>
-                                    <Insets bottom="10.0" top="10.0" />
-                                </GridPane.margin>
-                            </TextField>
-                            <Button fx:id="search" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#search" prefHeight="25.0" text="search" GridPane.columnIndex="3">
-                                <GridPane.margin>
-                                    <Insets left="3.0" />
-                                </GridPane.margin>
-                            </Button>
-                            <Button fx:id="resize" layoutX="331.0" layoutY="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#resize" prefHeight="25.0" prefWidth="30.0" text="&gt;" GridPane.halignment="RIGHT">
-                           <GridPane.margin>
-                              <Insets />
                            </GridPane.margin>
-                        </Button>
-                            <TreeView fx:id="treeView" GridPane.columnSpan="4" GridPane.rowIndex="1" VBox.vgrow="ALWAYS">
+                                    <font>
+                                        <Font name="Arial Bold" size="14.0" />
+                                    </font>
+                                </Button>
+                                <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" text="%Query" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+                                    <padding>
+                                        <Insets left="5.0" />
+                                    </padding>
                            <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin></TreeView>
-                        </children>
-                    </GridPane>
-               </children>
-            </AnchorPane>
-          <AnchorPane fx:id="logDetailView" minHeight="0.0" minWidth="0.0">
-              <fx:include fx:id="logEntryDisplay" source="LogEntryDisplay.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-          </AnchorPane>
-        </items>
-      </SplitPane>
+                              <Insets right="3.0" />
+                           </GridPane.margin>
+                                </Label>
+                                <TextField fx:id="query" onAction="#updateQuery" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER">
+                                    <GridPane.margin>
+                                        <Insets bottom="10.0" top="10.0" />
+                                    </GridPane.margin>
+                                </TextField>
+                                <Label text="%SearchButtonText" GridPane.columnIndex="3">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin></Label>
+                                <Button fx:id="search" mnemonicParsing="false" onAction="#searchDescending" GridPane.columnIndex="4">
+                                    <GridPane.margin>
+                                        <Insets left="3.0" right="3.0" />
+                                    </GridPane.margin>
+                                    <graphic>
+                                        <ImageView fx:id="searchDescendingImageView" fitHeight="18.0" fitWidth="18.0">
+                                            <!-- Image not set here as this crashes the SceneBuilder -->
+                                        </ImageView>
+                                    </graphic>
+                                    <tooltip>
+                                        <Tooltip text="%SortDescending" />
+                                    </tooltip>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#searchAscending" GridPane.columnIndex="5">
+                                    <graphic>
+                                        <ImageView fx:id="searchAscendingImageView" fitHeight="18.0" fitWidth="18.0">
+                                        <!-- Image not set here as this crashes the SceneBuilder -->
+                                        </ImageView>
+                                    </graphic>
+                                    <tooltip>
+                                        <Tooltip text="%SortAscending" />
+                                    </tooltip>
+                           <GridPane.margin>
+                              <Insets right="5.0" />
+                           </GridPane.margin>
+                                </Button>
+                                <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="6" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                                    <children>
+                                        <VBox alignment="CENTER">
+                                            <ProgressIndicator fx:id="progressIndicator" />
+                                        </VBox>
+                                        <TableView fx:id="tableView" GridPane.columnSpan="4" GridPane.rowIndex="1" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="descriptionCol" maxWidth="4000.0"/>
+                                            </columns>
+                                            <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            </columnResizePolicy>
+                                        </TableView>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </GridPane>
+                    </children>
+                </AnchorPane>
+                <AnchorPane fx:id="logDetailView" minHeight="0.0" minWidth="0.0">
+                    <fx:include fx:id="logEntryDisplay" source="LogEntryDisplay.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                </AnchorPane>
+            </items>
+        </SplitPane>
     </items>
 </SplitPane>

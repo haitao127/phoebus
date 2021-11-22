@@ -29,7 +29,7 @@
             <children>
                 <ListView fx:id="attachmentListView">
                     <placeholder>
-                        <Label text="No Attachments" />
+                        <Label text="%NoAttachments" />
                     </placeholder>
                 </ListView>
             </children>
@@ -37,7 +37,6 @@
         <StackPane fx:id="previewPane">
             <GridPane fx:id="noPreviewPane" visible="true" />
             <ImageView fx:id="imagePreview" managed="false" preserveRatio="true" visible="false" />
-            <TextArea fx:id="textPreview" visible="false" />
         </StackPane>
     </items>
     <VBox.margin>

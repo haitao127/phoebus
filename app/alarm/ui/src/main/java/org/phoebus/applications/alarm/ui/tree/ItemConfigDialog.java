@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Oak Ridge National Laboratory.
+ * Copyright (c) 2018-2021 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,27 @@
  *******************************************************************************/
 package org.phoebus.applications.alarm.ui.tree;
 
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
+
+import org.phoebus.applications.alarm.AlarmSystem;
 import org.phoebus.applications.alarm.client.AlarmClient;
 import org.phoebus.applications.alarm.client.AlarmClientLeaf;
 import org.phoebus.applications.alarm.client.AlarmClientNode;
 import org.phoebus.applications.alarm.model.AlarmTreeItem;
+import org.phoebus.applications.alarm.ui.tree.datetimepicker.DateTimePicker;
 import org.phoebus.ui.dialog.ExceptionDetailsErrorDialog;
 import org.phoebus.util.time.SecondsParser;
+import org.phoebus.util.time.TimeParser;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -32,6 +40,7 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.util.Duration;
 
+
 /** Dialog for editing {@link AlarmTreeItem}
  *
  *  <p>When pressing "OK", dialog sends updated
@@ -42,8 +51,10 @@ class ItemConfigDialog extends Dialog<Boolean>
 {
     private TextField description;
     private CheckBox enabled, latching, annunciating;
+    private DateTimePicker enabled_date_picker;
     private Spinner<Integer> delay, count;
     private TextField filter;
+    private ComboBox<String> relative_date;
     private final TitleDetailTable guidance, displays, commands;
     private final TitleDetailDelayTable actions;
 
@@ -81,6 +92,13 @@ class ItemConfigDialog extends Dialog<Boolean>
             enabled = new CheckBox("Enabled");
             enabled.setTooltip(new Tooltip("Enable alarms? See also filter expression"));
             enabled.setSelected(leaf.isEnabled());
+            enabled.setOnAction((event) -> {
+                relative_date.getSelectionModel().clearSelection();
+                relative_date.setValue(null);
+                enabled_date_picker.getEditor().clear();
+                enabled_date_picker.setValue(null);
+                enabled.setSelected(true);
+            });
 
             latching = new CheckBox("Latch");
             latching.setTooltip(new Tooltip("Latch alarm until acknowledged?"));
@@ -91,6 +109,37 @@ class ItemConfigDialog extends Dialog<Boolean>
             annunciating.setSelected(leaf.isAnnunciating());
 
             layout.add(new HBox(10, enabled, latching, annunciating), 1, row++);
+
+            layout.add(new Label("Disable until:"), 0, row);
+            enabled_date_picker = new DateTimePicker();
+            enabled_date_picker.setDateTimeValue(leaf.getEnabledDate());
+            relative_date = new ComboBox<String>();
+            relative_date.getItems().addAll(AlarmSystem.shelving_options);
+
+            final EventHandler<ActionEvent> relative_event_handler = new EventHandler<>() {
+                @Override public void handle(ActionEvent e) {
+                    enabled.setSelected(false);
+                    enabled_date_picker.getEditor().clear();
+                }
+            };
+
+            relative_date.setOnAction(relative_event_handler);
+
+            // setOnAction for relative date must be set to null as to not trigger event when setting value
+            enabled_date_picker.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override public void handle(ActionEvent e) {
+                        if (enabled_date_picker.getDateTimeValue() != null) {
+                            relative_date.setOnAction(null);
+                            enabled.setSelected(false);
+                            enabled_date_picker.getEditor().commitValue();
+                            relative_date.getSelectionModel().clearSelection();
+                            relative_date.setValue(null);
+                            relative_date.setOnAction(relative_event_handler);
+                        };
+                    }
+            });
+
+            layout.add(new HBox(10, enabled_date_picker, relative_date), 1, row++);
 
             layout.add(new Label("Alarm Delay [seconds]:"), 0, row);
             delay = new Spinner<>(0, Integer.MAX_VALUE, leaf.getDelay());
@@ -221,6 +270,22 @@ class ItemConfigDialog extends Dialog<Boolean>
             pv.setCount(count.getValue());
             // TODO Check filter expression
             pv.setFilter(filter.getText().trim());
+
+
+            final LocalDateTime selected_enable_date = enabled_date_picker.getDateTimeValue();
+            final String relative_enable_date = relative_date.getValue();
+
+            if ((selected_enable_date != null) && selected_enable_date.isAfter(LocalDateTime.now()))
+                pv.setEnabledDate(selected_enable_date);
+            else
+                pv.setEnabled(true);
+
+            if (relative_enable_date != null)
+            {
+                final TemporalAmount amount = TimeParser.parseTemporalAmount(relative_enable_date);
+                final LocalDateTime update_date = LocalDateTime.now().plus(amount);
+                pv.setEnabledDate(update_date);
+            };
             config = pv;
         }
         else

@@ -62,7 +62,6 @@ import org.epics.vtype.VNumberArray;
 import org.epics.vtype.VString;
 import org.epics.vtype.VStringArray;
 import org.epics.vtype.VType;
-import org.phoebus.applications.saveandrestore.ApplicationContextProvider;
 import org.phoebus.applications.saveandrestore.Messages;
 import org.phoebus.applications.saveandrestore.SafeMultiply;
 import org.phoebus.applications.saveandrestore.Utilities;
@@ -79,9 +78,9 @@ import org.phoebus.applications.saveandrestore.ui.model.VNoData;
 import org.phoebus.applications.saveandrestore.ui.model.VSnapshot;
 import org.phoebus.applications.saveandrestore.ui.model.VTypePair;
 import org.phoebus.framework.preferences.PreferencesReader;
+import org.phoebus.pv.PVFactory;
 import org.phoebus.pv.PVPool;
 import org.phoebus.ui.docking.DockPane;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,10 +169,8 @@ public class SnapshotController implements NodeChangedListener {
      */
     private SnapshotTab snapshotTab;
 
-    @Autowired
     private SaveAndRestoreService saveAndRestoreService;
 
-    @Autowired
     private String defaultEpicsProtocol;
 
     private final SimpleStringProperty createdByTextProperty = new SimpleStringProperty();
@@ -199,15 +196,13 @@ public class SnapshotController implements NodeChangedListener {
     private boolean showDeltaPercentage = false;
     private boolean hideEqualItems;
 
-    private final PreferencesReader preferencesReader = (PreferencesReader) ApplicationContextProvider.getApplicationContext().getBean("preferencesReader");
     private final SimpleBooleanProperty showTreeTable = new SimpleBooleanProperty(false);
-    private final boolean isTreeTableViewEnabled = preferencesReader.getBoolean("treeTableView.enable");
+    private boolean isTreeTableViewEnabled;
+
 
     private Node config;
 
     private static final Executor UI_EXECUTOR = Platform::runLater;
-
-    //private SimpleBooleanProperty snapshotNodePropertiesDirty = new SimpleBooleanProperty(false);
 
     public static final Logger LOGGER = Logger.getLogger(SnapshotController.class.getName());
 
@@ -220,6 +215,13 @@ public class SnapshotController implements NodeChangedListener {
 
     @FXML
     public void initialize() {
+
+        saveAndRestoreService = SaveAndRestoreService.getInstance();
+
+        defaultEpicsProtocol =
+                new PreferencesReader(PVFactory.class, "/pv_preferences.properties").get("default");
+        isTreeTableViewEnabled =
+                new PreferencesReader(getClass(), "/save_and_restore_preferences.properties").getBoolean("treeTableView.enable");
 
         snapshotNameLabel.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         snapshotNameLabel.getStyleClass().add("stand-out-mandatory");
@@ -494,7 +496,7 @@ public class SnapshotController implements NodeChangedListener {
             persistentSnapshotName = snapshot.getName();
             persistentGoldenState = Boolean.parseBoolean(snapshot.getProperty("golden"));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.INFO, "Error loading snapshot", e);
         }
         loadSnapshotInternal(snapshot);
     }
@@ -521,7 +523,7 @@ public class SnapshotController implements NodeChangedListener {
                 snapshotTreeTable.updateTable(tableEntries, snapshots, false, false, false);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.INFO, "Error adding snapshot", e);
         }
     }
 
@@ -541,7 +543,7 @@ public class SnapshotController implements NodeChangedListener {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.INFO, "Error loading save set", e);
         }
     }
 
@@ -577,7 +579,7 @@ public class SnapshotController implements NodeChangedListener {
                     });
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.INFO, "Error loading snapshot", e);
             }
         });
     }
@@ -615,7 +617,7 @@ public class SnapshotController implements NodeChangedListener {
                 try {
                     countDownLatch.await();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.INFO, "Encountered InterruptedException", e);
                 }
 
                 if (restoreFailed.isEmpty()) {
@@ -698,7 +700,7 @@ public class SnapshotController implements NodeChangedListener {
                 snapshotSaveableProperty.setValue(true);
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.INFO, "Error taking snapshot", e);
         }
         finally{
 
@@ -1024,7 +1026,7 @@ public class SnapshotController implements NodeChangedListener {
             try {
                 pv = PVPool.getPV(pvName);
                 pv.onValueEvent().throttleLatest(TABLE_UPDATE_INTERVAL, TimeUnit.MILLISECONDS).subscribe(value -> {
-                    pvValue = org.phoebus.pv.PV.isDisconnected(value) ? value = VDisconnectedData.INSTANCE : value;
+                    pvValue = org.phoebus.pv.PV.isDisconnected(value) ? VDisconnectedData.INSTANCE : value;
                     this.snapshotTableEntry.setLiveValue(pvValue);
                 });
 
@@ -1034,14 +1036,12 @@ public class SnapshotController implements NodeChangedListener {
                    readbackPv.onValueEvent()
                            .throttleLatest(TABLE_UPDATE_INTERVAL, TimeUnit.MILLISECONDS)
                            .subscribe(value -> {
-                                if (showLiveReadbackProperty.get()) {
-                                    this.readbackValue = org.phoebus.pv.PV.isDisconnected(value) ? value : VDisconnectedData.INSTANCE;
-                                    this.snapshotTableEntry.setReadbackValue(this.readbackValue);
-                                }
+                                this.readbackValue = org.phoebus.pv.PV.isDisconnected(value) ? VDisconnectedData.INSTANCE : value;
+                                this.snapshotTableEntry.setReadbackValue(this.readbackValue);
                             });
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.INFO, "Error connecting to PV", e);
             }
         }
 
