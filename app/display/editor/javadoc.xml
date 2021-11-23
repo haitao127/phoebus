@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!-- Ant file for generating javadoc for API
+
+     Execute manually as
+
+       ant -f javadoc.xml clean all
+
+     to re-create the doc/java files.
+
+     The documentation is on purpose incomplete.
+     Instead of covering all the source code, it only includes
+     the essential Widget and script classes that are likely to
+     remain accessible from scripts, while everything beyond that API
+     is open to changes.
+  -->
+<project name="api" default="all">
+  <!-- Output directory -->
+  <property name="out" value="doc/html/generated"/>
+  
+  <path id="classpath">
+    <fileset dir="../../..">
+      <!-- Brute-force way to resolve all missing references:
+           Use all the jar files of a product.
+           This requires first building the product (with incomplete help),
+           then creating the API doc,
+           then building the product again (with API doc in the help)
+        -->
+      <include name="phoebus-product/target/lib/*.jar"/>
+    </fileset>
+  </path>
+  <!-- Remove all that might have been created -->
+  <target name="clean">
+    <delete dir="${out}"/>
+  </target>
+  <!-- Create Javadoc -->
+  <target name="javadoc">
+  	<mkdir dir="${out}"/>
+    <!-- Capture the path as a delimited property using the refid attribute -->
+    <property name="myclasspath" refid="classpath"/>
+    <!-- Emit the property to the ant console -->
+    <echo message="Classpath: ${myclasspath}"/>
+    <javadoc additionalparam="-notimestamp -html5"
+             classpathref="classpath" destdir="${out}" author="false" access="public"
+             version="true" use="false" windowtitle="Display Builder API"
+             overview="doc/javadoc_overview.html"
+             useexternalfile="yes">
+      <doctitle><![CDATA[<h1>Display Builder API</h1>]]></doctitle>
+      <fileset dir="../../..">
+        <include name="core/framework/src/main/java/org/phoebus/framework/macros/*.java"/>
+        <include name="app/display/model/src/main/java/org/csstudio/display/builder/model/Widget.java"/>
+        <include name="app/display/model/src/main/java/org/csstudio/display/builder/model/DisplayModel.java"/>
+        <include name="app/display/model/src/main/java/org/csstudio/display/builder/model/WidgetProperty.java"/>
+        <include name="app/display/model/src/main/java/org/csstudio/display/builder/model/DisplayModel.java"/>
+        <include name="app/display/model/src/main/java/org/csstudio/display/builder/model/**/*Widget.java"/>
+        <include name="app/display/runtime/src/main/java/org/csstudio/display/builder/runtime/script/*.java"/>
+        <include name="app/display/runtime/src/main/java/org/csstudio/display/builder/runtime/pv/RuntimePV.java"/>
+        <exclude name="**/WhateverThing.java"/>
+      </fileset>
+      <group title="Script API" packages="org.csstudio.display.builder.*"/>
+      <group title="Phoebus API" packages="org.phoebus.*"/>
+    </javadoc>
+  </target>
+  <!-- Run the whole chain -->
+  <target name="all" depends="javadoc">
+    <echo>=== Completed ${ant.project.name} ===</echo>
+  </target>
+</project>

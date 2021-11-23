@@ -1,0 +1,10 @@
+<project default="app-diag">
+  <import file="../../dependencies/ant_settings.xml"/>
+
+  <target name="app-diag" depends="compile-app">
+    <jar destfile="${build}/app-diag-${version}.jar">
+      <fileset dir="${classes}"/>
+      <fileset dir="${resources}"/>
+    </jar>
+  </target>
+</project>

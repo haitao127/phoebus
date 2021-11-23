@@ -1,0 +1,67 @@
+<project default="app-display-editor">
+  <import file="../../../dependencies/ant_settings.xml"/>
+
+  <target name="clean" description="Remove all artifacts">
+    <!-- Delete the ${build} directory trees -->
+    <delete dir="${build}"/>
+    <!-- Delete the javadoc -->
+    <ant antfile="javadoc.xml" target="clean"/>
+  </target>
+	
+  <target name="app-display-editor">
+  	<!-- Build Script API Javadoc
+  	     Actually needs to be build _before_
+  	     building the *.rst doc,
+  	     but updating it in here helps find
+  	     fatal problems in the javadoc.
+  	  -->
+    <ant antfile="javadoc.xml" target="all"/>
+
+  	<!-- Build Code -->
+  	<mkdir dir="${classes}"/>
+    <javac destdir="${classes}" debug="${debug}">
+      <src path="${src}"/>
+      <src path="${test}"/>
+      <classpath>
+        <path refid="app-classpath"/>
+        <pathelement path="../model/${build}/app-display-model-${version}.jar"/>
+        <pathelement path="../representation/${build}/app-display-representation-${version}.jar"/>
+        <pathelement path="../representation-javafx/${build}/app-display-representation-javafx-${version}.jar"/>
+      </classpath>
+    </javac>
+  	
+    <jar destfile="${build}/app-display-editor-${version}.jar">
+      <fileset dir="${classes}"/>
+      <fileset dir="${resources}"/>
+    </jar>
+  </target>
+
+  <target name="test-display-editor" depends="app-display-editor">
+    <junit printsummary="withOutAndErr" haltonfailure="yes">
+      <classpath>
+        <path refid="app-classpath"/>
+        <pathelement path="../model/${build}/app-display-model-${version}.jar"/>
+        <pathelement path="../representation/${build}/app-display-representation-${version}.jar"/>
+        <pathelement path="${build}/app-display-editor-${version}.jar"/>
+      </classpath>
+      <batchtest>
+        <zipfileset src="${build}/app-display-editor-${version}.jar" includes="**/*Test.class"/>
+      </batchtest>
+      <formatter type="plain" usefile="false"/>
+    </junit>
+  </target>
+	
+  <target name="demo" depends="app-display-editor" description="Run the demo">
+    <java classname="org.csstudio.display.builder.editor.EditorDemo" fork="true">
+      <classpath>
+        <path refid="app-classpath"/>
+        <pathelement path="../../rtplot/${build}/app-rtplot-${version}.jar"/>
+        <pathelement path="../model/${build}/app-display-model-${version}.jar"/>
+        <pathelement path="../representation/${build}/app-display-representation-${version}.jar"/>
+        <pathelement path="../representation-javafx/${build}/app-display-representation-javafx-${version}.jar"/>
+        <pathelement path="${build}/app-display-editor-${version}.jar"/>
+      </classpath>
+    </java>
+  </target>
+	
+</project>

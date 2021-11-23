@@ -1,0 +1,37 @@
+<project default="core-formula">
+  <import file="../../dependencies/ant_settings.xml"/>
+
+  <target name="core-formula">
+    <mkdir dir="${classes}"/>
+    <javac destdir="${classes}" debug="${debug}">
+      <src path="${src}"/>
+      <src path="${test}"/>
+      <classpath>
+        <fileset dir="${dependencies}/phoebus-target/target/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement path="../framework/${build}/core-framework-${version}.jar"/>
+        <pathelement path="../vtype/${build}/core-vtype-${version}.jar"/>
+      </classpath>
+    </javac>
+    <jar destfile="${build}/core-formula-${version}.jar">
+      <fileset dir="${classes}"/>
+      <fileset dir="${resources}"/>
+    </jar>
+  </target>
+
+  <target name="test-formula" depends="core-formula">
+    <junit printsummary="withOutAndErr" haltonfailure="yes">
+      <classpath>
+        <fileset dir="${dependencies}/phoebus-target/target/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement path="${build}/core-formula-${version}.jar"/>
+      </classpath>
+      <batchtest>
+        <zipfileset src="${build}/core-formula-${version}.jar" includes="**/*Test.class"/>
+      </batchtest>
+    </junit>
+  </target>
+
+</project>
