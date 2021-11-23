@@ -1,3 +1,0 @@
-# db folder holds H2 database files created by unit tests.
-h2.db.mv.db
-h2.db.trace.db
