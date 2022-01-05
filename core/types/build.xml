@@ -1,0 +1,16 @@
+<project default="core-types">
+  <import file="../../dependencies/ant_settings.xml"/>
+
+  <target name="core-types">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" debug="${debug}">
+      <classpath>
+        <pathelement path="../framework/${build}/core-framework-${version}.jar"/>
+        <pathelement path="../logbook/${build}/core-logbook-${version}.jar"/>
+      </classpath>
+    </javac>
+  	<jar destfile="${build}/core-types-${version}.jar">
+      <fileset dir="${classes}"/>
+    </jar>
+  </target>
+</project>

@@ -1,0 +1,81 @@
+<!--  Common settings for all ant build files -->
+<project name="settings">
+  <!-- Global properties -->
+  <property name="version" value="4.6.6"/>
+
+  <!-- Shortcuts for paths within a module subdirectory -->
+  <property name="src" value="src/main/java"/>
+  <property name="test" value="src/test/java"/>
+  <property name="resources" value="src/main/resources"/>
+  <property name="build" value="target"/>
+  <property name="classes" value="target/classes"/>
+  
+  <!-- 'dependencies' is this directory -->
+  <dirname property="dependencies" file="${ant.file.settings}"/>
+
+  <!-- Classpath used to build applications:
+       1) core modules
+       2) dependencies
+    -->
+  <path id="app-classpath">
+    <fileset dir="${dependencies}/../core">
+      <include name="**/${build}/*-${version}.jar"/>
+    </fileset>
+
+    <fileset dir="${dependencies}/phoebus-target/target/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+
+  <!-- Avoid the 'includeantruntime' warning -->
+  <property name="build.sysclasspath" value="last"/>
+
+  <!-- Include debug info? true or off -->
+  <property name="debug" value="true"/>
+  
+  <!--  Targets for use in subdirectories
+        Properties like ${build} are NOT
+        relative to ${dependencies} but
+        evaluted within the subdir
+        where the common settings are included
+   -->
+  <target name="clean" description="Remove all artifacts">
+    <!-- Delete the ${build} directory trees -->
+    <delete dir="${build}"/>
+  </target>
+
+
+  <target name="compile-app" description="Compile application">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpathref="app-classpath"/>
+  </target>
+	
+  <target name="jfxarch" description="Determine JavaFX architecture">
+    <!-- Check if target platform is for linux, mac, win -->
+    <fileset dir="${dependencies}/phoebus-target/target/lib" id="jfxfiles">
+      <include name="javafx-base-*-linux.jar"/>
+      <include name="javafx-base-*-mac.jar"/>
+      <include name="javafx-base-*-win.jar"/>
+    </fileset>
+    
+    <echo message="JFX 'base' File: ${toString:jfxfiles}"/>
+    
+    <condition property="jfxarch" value="linux">
+      <contains string="${toString:jfxfiles}" substring="-linux"/>
+    </condition>
+    <condition property="jfxarch" value="mac">
+      <contains string="${toString:jfxfiles}" substring="-mac"/>
+    </condition>
+    <condition property="jfxarch" value="win">
+      <contains string="${toString:jfxfiles}" substring="-win"/>
+    </condition>
+    <!-- Simpler, but requires full name incl. version. Cannot use 'javafx-base-*-linux.jar'
+    <available file="phoebus-target/target/lib/javafx-base-11-linux.jar" property="jfxarch" value="linux" />
+    <available file="phoebus-target/target/lib/javafx-base-11-mac.jar"   property="jfxarch" value="mac" />
+    <available file="phoebus-target/target/lib/javafx-base-11-win.jar"   property="jfxarch" value="win" />
+    -->
+    <echo message="jfxarch = ${jfxarch}"/>
+  </target>
+
+</project>

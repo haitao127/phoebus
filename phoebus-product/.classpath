@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+        <attributes>
+            <attribute name="module" value="true"/>
+        </attributes>
+    </classpathentry>
+    <classpathentry combineaccessrules="false" kind="src" path="/phoebus-target"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-launcher"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-framework"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-ui"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-types"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-pv"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-email"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-util"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-logbook"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-formula"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/core-security"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-3d-viewer"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-alarm-ui"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-alarm-logging-ui"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-alarm-model"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-alarm-datasource"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-scan-ui"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-scan-model"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-scan-client"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-channel-utility"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-channel-channelfinder"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-channel-views"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-console"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-fonts"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-editor"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-runtime"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-representation-javafx"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-representation"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-model"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-navigation"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-convert-medm"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-convert-edm"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-display-adapters"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-databrowser"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-trends-rich-adapters"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-rtplot"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-pvtable"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-email-ui"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-errlog"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-log-configuration"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-pvtree"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-probe"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-logbook-ui"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-filebrowser"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-perfmon"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-pace"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/app-diag"/>
+    <classpathentry kind="output" path="target/classes"/>
+</classpath>

@@ -1,0 +1,40 @@
+<project default="core-pv">
+  <import file="../../dependencies/ant_settings.xml"/>
+
+  <target name="core-pv">
+    <mkdir dir="${classes}"/>
+    <javac destdir="${classes}" debug="${debug}">
+      <src path="${src}"/>
+      <src path="${test}"/>
+      <classpath>
+        <fileset dir="${dependencies}/phoebus-target/target/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement path="../framework/${build}/core-framework-${version}.jar"/>
+        <pathelement path="../util/${build}/core-util-${version}.jar"/>
+        <pathelement path="../formula/${build}/core-formula-${version}.jar"/>
+        <pathelement path="../pva/${build}/core-pva-${version}.jar"/>
+        <pathelement path="../vtype/${build}/core-vtype-${version}.jar"/>
+      </classpath>
+    </javac>
+  	<jar destfile="${build}/core-pv-${version}.jar">
+      <fileset dir="${classes}"/>
+      <fileset dir="${resources}"/>
+    </jar>
+  </target>
+	
+  <target name="test-pv" depends="core-pv">
+    <junit printsummary="withOutAndErr" haltonfailure="yes">
+      <classpath>
+        <fileset dir="${dependencies}/phoebus-target/target/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement path="${build}/core-pv-${version}.jar"/>
+      </classpath>
+      <batchtest>
+        <zipfileset src="${build}/core-pv-${version}.jar" includes="**/*Test.class"/>
+      </batchtest>
+    </junit>
+  </target>
+
+</project>

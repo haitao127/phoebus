@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<display version="2.0.0">
+  <name>Meter Widgets</name>
+  <width>980</width>
+  <height>1000</height>
+  <widget type="label" version="2.0.0">
+    <name>Label</name>
+    <class>TITLE</class>
+    <text>Meter Widgets</text>
+    <width>550</width>
+    <height>31</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_1</name>
+    <text>Meters display numerical values.
+By default, the meter reflects the range, units, alarm limits, and current alarm state of the process variable.</text>
+    <y>31</y>
+    <width>370</width>
+    <height>70</height>
+  </widget>
+  <widget type="meter" version="3.0.0">
+    <name>Meter</name>
+    <pv_name>loc://x(50)</pv_name>
+    <x>410</x>
+    <y>101</y>
+    <width>360</width>
+    <height>220</height>
+    <foreground_color>
+      <color red="255" green="0" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="51" green="51" blue="51">
+      </color>
+    </background_color>
+    <font>
+      <font family="Liberation Serif" style="BOLD_ITALIC" size="24.0">
+      </font>
+    </font>
+    <format>3</format>
+    <precision>2</precision>
+    <limits_from_pv>false</limits_from_pv>
+    <needle_color>
+      <color red="255" green="204" blue="128">
+      </color>
+    </needle_color>
+    <knob_color>
+      <color red="0" green="0" blue="255">
+      </color>
+    </knob_color>
+  </widget>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar</name>
+    <pv_name>loc://x(50)</pv_name>
+    <x>420</x>
+    <y>340</y>
+    <width>350</width>
+    <height>30</height>
+    <limits_from_pv>false</limits_from_pv>
+  </widget>
+  <widget type="meter" version="3.0.0">
+    <name>Meter_1</name>
+    <pv_name>sim://ramp(-5, 5, 0.1, 0.1)</pv_name>
+    <x>10</x>
+    <y>101</y>
+    <width>380</width>
+    <height>210</height>
+    <minimum>-5.0</minimum>
+    <maximum>5.0</maximum>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update</name>
+    <pv_name>sim://ramp(-5, 5, 0.1, 0.1)</pv_name>
+    <x>130</x>
+    <y>610</y>
+    <width>130</width>
+    <height>30</height>
+  </widget>
+  <widget type="meter" version="3.0.0">
+    <name>Meter_2</name>
+    <pv_name>sim://ramp(-5, 5, 0.1, 0.1)</pv_name>
+    <x>10</x>
+    <y>389</y>
+    <width>380</width>
+    <height>210</height>
+    <show_value>false</show_value>
+    <show_units>false</show_units>
+    <show_limits>false</show_limits>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+    <minimum>-5.0</minimum>
+    <maximum>5.0</maximum>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_2</name>
+    <text>Many of these features can be disabled.</text>
+    <y>350</y>
+    <width>370</width>
+    <height>39</height>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_3</name>
+    <text>The meter's colors and fonts can be misconfigured.</text>
+    <x>410</x>
+    <y>31</y>
+    <width>360</width>
+    <height>39</height>
+  </widget>
+</display>
