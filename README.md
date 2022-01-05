@@ -196,7 +196,25 @@ URL='https://controlssoftware.sns.ornl.gov/css_phoebus/nightly/phoebus-$(arch).z
 
 ## 发布
 
-有一个发布配置文件，可以帮助准备和部署 Phoebus 版本。
+The `dependencies` include the platform-dependent JavaFX library with different content for linux, mac and windows.
+When building as described above, the result will be an executable for the build platform.
+To build for a different platform, create the `dependencies` in one of these ways:
+
+    # Either create the build platform for Linux..
+    ( cd phoebus; mvn clean verify  -Djavafx.platform=linux  -f dependencies/pom.xml )
+
+    # or Mac OS X ..
+    ( cd phoebus; mvn clean verify  -Djavafx.platform=mac    -f dependencies/pom.xml )
+
+    # or Windows:
+    ( cd phoebus; mvn clean verify  -Djavafx.platform=win    -f dependencies/pom.xml )
+
+The remaining build is the same, for example `ant clean dist` to build the distribution.
+
+
+## Release
+
+There is a release profile which helps prepare and deploy a phoebus release.
 
 ```
 mvn -P release release:prepare

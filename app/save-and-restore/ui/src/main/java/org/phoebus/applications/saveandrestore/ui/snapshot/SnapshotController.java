@@ -220,14 +220,13 @@ public class SnapshotController implements NodeChangedListener {
 
         defaultEpicsProtocol =
                 new PreferencesReader(PVFactory.class, "/pv_preferences.properties").get("default");
-        isTreeTableViewEnabled =
-                new PreferencesReader(getClass(), "/save_and_restore_preferences.properties").getBoolean("treeTableView.enable");
+        isTreeTableViewEnabled = new PreferencesReader(getClass(), "/save_and_restore_preferences.properties").getBoolean("treeTableView.enable");
 
         snapshotNameLabel.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         snapshotNameLabel.getStyleClass().add("stand-out-mandatory");
         snapshotName.textProperty().bindBidirectional(snapshotNameProperty);
         snapshotName.textProperty().addListener(((observableValue, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
+            if (newValue == null || newValue.isEmpty()) {
                 snapshotNameLabel.getStyleClass().add("stand-out-mandatory");
             } else {
                 snapshotNameLabel.getStyleClass().remove("stand-out-mandatory");
@@ -238,7 +237,7 @@ public class SnapshotController implements NodeChangedListener {
         snapshotCommentLabel.getStyleClass().add("stand-out-mandatory");
         snapshotComment.textProperty().bindBidirectional(snapshotCommentProperty);
         snapshotComment.textProperty().addListener(((observableValue, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
+            if (newValue == null || newValue.isEmpty()) {
                 snapshotCommentLabel.getStyleClass().add("stand-out-mandatory");
             } else {
                 snapshotCommentLabel.getStyleClass().remove("stand-out-mandatory");
