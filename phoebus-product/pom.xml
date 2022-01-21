@@ -27,7 +27,7 @@
       <artifactId>app-probe</artifactId>
       <version>4.6.6-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-logbook-inmemory</artifactId>
       <version>4.6.6-SNAPSHOT</version>
@@ -55,7 +55,7 @@
       <artifactId>app-logbook-olog-client-es</artifactId>
       <version>4.6.6-SNAPSHOT</version>
       <optional>true</optional>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-pvtable</artifactId>
@@ -66,7 +66,7 @@
       <artifactId>app-pvtree</artifactId>
       <version>4.6.6-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-log-configuration</artifactId>
       <version>4.6.6-SNAPSHOT</version>
@@ -75,7 +75,7 @@
       <groupId>org.phoebus</groupId>
       <artifactId>app-email-ui</artifactId>
       <version>4.6.6-SNAPSHOT</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-errlog</artifactId>
@@ -106,11 +106,11 @@
       <artifactId>app-display-runtime</artifactId>
       <version>4.6.6-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-display-editor</artifactId>
       <version>4.6.6-SNAPSHOT</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-display-navigation</artifactId>
@@ -131,11 +131,11 @@
       <artifactId>app-display-convert-edm</artifactId>
       <version>4.6.6-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-scan-ui</artifactId>
       <version>4.6.6-SNAPSHOT</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-alarm-ui</artifactId>
@@ -151,16 +151,16 @@
       <artifactId>app-alarm-datasouce</artifactId>
       <version>4.6.6-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-update</artifactId>
       <version>4.6.6-SNAPSHOT</version>
-    </dependency>
-    <dependency>
+    </dependency> -->
+    <!-- <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-3d-viewer</artifactId>
       <version>4.6.6-SNAPSHOT</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.phoebus</groupId>
       <artifactId>app-perfmon</artifactId>

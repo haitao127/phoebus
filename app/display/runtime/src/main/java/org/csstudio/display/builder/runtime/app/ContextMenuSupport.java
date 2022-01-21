@@ -249,9 +249,9 @@ class ContextMenuSupport
         if (editor != null && AuthorizationService.hasAuthorization("edit_display"))
             items.add(new OpenInEditorAction(editor, widget));
 
-        items.add(new SeparatorMenuItem());
+        // items.add(new SeparatorMenuItem());
 
-        items.add(new ReloadDisplayAction(instance));
+        // items.add(new ReloadDisplayAction(instance));
     }
 
     private static MenuItem createMenuItem(final Widget widget, final ActionInfo info)
