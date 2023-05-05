@@ -26,18 +26,13 @@ public class CommonFonts
 {
     private final static String[] fonts = new String[]
     {
-        "LiberationMono-Regular.ttf",
-        "LiberationSerif-Bold.ttf",
-        "LiberationSans-Bold.ttf",
-        "LiberationSerif-BoldItalic.ttf",
-        "LiberationMono-Bold.ttf",
-        "LiberationSans-BoldItalic.ttf",
-        "LiberationSerif-Italic.ttf",
-        "LiberationMono-BoldItalic.ttf",
-        "LiberationSans-Italic.ttf",
-        "LiberationSerif-Regular.ttf",
-        "LiberationMono-Italic.ttf",
-        "LiberationSans-Regular.ttf"
+        "SourceHanSansCN-Bold.otf",
+        "SourceHanSansCN-ExtraLight.otf",
+        "SourceHanSansCN-Heavy.otf",
+        "SourceHanSansCN-Light.otf",
+        "SourceHanSansCN-Medium.otf",
+        "SourceHanSansCN-Normal.otf",
+        "SourceHanSansCN-Regular.otf"
     };
 
     /** Install common fonts */

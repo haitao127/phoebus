@@ -1,199 +1,294 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
-  <name>Widget Classes</name>
+  <name>Display</name>
+  <background_color use_class="true">
+    <color name="BACKGROUND" red="240" green="240" blue="240">
+    </color>
+  </background_color>
+  <widget type="rectangle" version="2.0.0">
+    <name>Panel</name>
+    <x>460</x>
+    <y>140</y>
+    <width>270</width>
+    <height>300</height>
+    <line_width>0</line_width>
+    <background_color use_class="true">
+      <color name="Group_Background" red="210" green="210" blue="210">
+      </color>
+    </background_color>
+    <corner_width>10</corner_width>
+    <corner_height>10</corner_height>
+  </widget>
   <widget type="label" version="2.0.0">
-    <name>TITLE</name>
-    <class>TITLE</class>
-    <text>TITLE</text>
+    <name>Title</name>
+    <text>Title</text>
     <x use_class="true">0</x>
     <y use_class="true">0</y>
-    <width>620</width>
-    <height>30</height>
+    <width>800</width>
+    <height use_class="true">50</height>
     <font use_class="true">
-      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      <font name="TITLE" family="Source Han Sans" style="BOLD" size="32.0">
       </font>
     </font>
     <foreground_color use_class="true">
-      <color name="Text" red="0" green="0" blue="0">
+      <color name="Text-Light" red="250" green="250" blue="250">
       </color>
     </foreground_color>
-    <transparent use_class="true">true</transparent>
+    <background_color use_class="true">
+      <color name="Title_Background" red="30" green="115" blue="115">
+      </color>
+    </background_color>
+    <transparent use_class="true">false</transparent>
+    <horizontal_alignment use_class="true">1</horizontal_alignment>
+    <vertical_alignment use_class="true">1</vertical_alignment>
   </widget>
-  <widget type="label" version="2.0.0">
-    <name>COMMENT</name>
-    <text>COMMENT</text>
-    <y>60</y>
+  <widget type="textupdate" version="2.0.0">
+    <name>Sub-Title</name>
+    <pv_name use_class="true">sys://time</pv_name>
+    <x>600</x>
+    <y use_class="true">10</y>
+    <width use_class="true">180</width>
+    <height use_class="true">30</height>
     <font use_class="true">
-      <font name="Comment" family="Liberation Sans" style="ITALIC" size="14.0">
+      <font name="Sub-Title" family="Source Han Sans CN" style="BOLD" size="18.0">
       </font>
     </font>
     <foreground_color use_class="true">
-      <color name="Text" red="0" green="0" blue="0">
+      <color name="Text_Light" red="250" green="250" blue="250">
       </color>
     </foreground_color>
+    <background_color>
+      <color name="Background" red="240" green="240" blue="240">
+      </color>
+    </background_color>
     <transparent use_class="true">true</transparent>
-    <wrap_words use_class="true">true</wrap_words>
-  </widget>
-  <widget type="led" version="2.0.0">
-    <name>ON_OFF</name>
-    <x>120</x>
-    <y>150</y>
-    <off_color use_class="true">
-      <color name="Off" red="60" green="100" blue="60">
-      </color>
-    </off_color>
-    <on_color use_class="true">
-      <color name="On" red="0" green="255" blue="0">
-      </color>
-    </on_color>
-  </widget>
-  <widget type="led" version="2.0.0">
-    <name>WARNING</name>
-    <x>120</x>
-    <y>190</y>
-    <off_color use_class="true">
-      <color name="Off" red="60" green="100" blue="60">
-      </color>
-    </off_color>
-    <on_color use_class="true">
-      <color name="Attention" red="255" green="160" blue="0">
-      </color>
-    </on_color>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>SECTION</name>
-    <text>SECTION</text>
-    <y>30</y>
-    <width>120</width>
-    <font use_class="true">
-      <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-      </font>
-    </font>
-    <foreground_color use_class="true">
-      <color name="Text" red="0" green="0" blue="0">
-      </color>
-    </foreground_color>
-    <transparent use_class="true">true</transparent>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <text>ON_OFF</text>
-    <y>150</y>
-    <width>120</width>
-    <font>
-      <font name="Comment" family="Liberation Sans" style="ITALIC" size="14.0">
-      </font>
-    </font>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <text>WARNING</text>
-    <y>190</y>
-    <width>120</width>
-    <font>
-      <font name="Comment" family="Liberation Sans" style="ITALIC" size="14.0">
-      </font>
-    </font>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <text>This file defines widget classes.
-
-The 'name' of each widget defines the class.
-Properties are marked to be included in the class definition.</text>
-    <x>300</x>
-    <y>20</y>
-    <width>310</width>
-    <height>150</height>
-    <font>
-      <font name="Comment" family="Liberation Sans" style="ITALIC" size="14.0">
-      </font>
-    </font>
-  </widget>
-  <widget type="led" version="2.0.0">
-    <name>ERROR</name>
-    <x>120</x>
-    <y>230</y>
-    <off_color use_class="true">
-      <color name="Off" red="60" green="100" blue="60">
-      </color>
-    </off_color>
-    <on_color use_class="true">
-      <color name="MAJOR" red="255" green="0" blue="0">
-      </color>
-    </on_color>
+    <horizontal_alignment use_class="true">2</horizontal_alignment>
+    <vertical_alignment use_class="true">1</vertical_alignment>
+    <tooltip></tooltip>
   </widget>
   <widget type="label" version="2.0.0">
     <name>Label</name>
-    <text>ERROR</text>
-    <y>230</y>
-    <width>120</width>
-    <font>
-      <font name="Comment" family="Liberation Sans" style="ITALIC" size="14.0">
+    <text>当前值：</text>
+    <x>460</x>
+    <y>285</y>
+    <height use_class="true">30</height>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <transparent use_class="true">true</transparent>
+    <horizontal_alignment use_class="true">2</horizontal_alignment>
+    <vertical_alignment use_class="true">1</vertical_alignment>
   </widget>
-  <widget type="led" version="2.0.0">
-    <name>GOOD_BAD</name>
-    <x>120</x>
-    <y>270</y>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update</name>
+    <x>580</x>
+    <y>285</y>
+    <height use_class="true">30</height>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <background_color use_class="true">
+      <color name="Read_Background" red="230" green="230" blue="230">
+      </color>
+    </background_color>
+    <horizontal_alignment use_class="true">0</horizontal_alignment>
+    <vertical_alignment use_class="true">1</vertical_alignment>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
+  </widget>
+  <widget type="spinner" version="2.0.0">
+    <name>Text Input</name>
+    <x>580</x>
+    <y>345</y>
+    <height use_class="true">30</height>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <background_color use_class="true">
+      <color name="Write_Background" red="230" green="230" blue="230">
+      </color>
+    </background_color>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
+  </widget>
+  <widget type="bool_button" version="2.0.0">
+    <name>Boolean Button</name>
+    <x>530</x>
+    <y>470</y>
+    <width>70</width>
+    <height use_class="true">30</height>
     <off_color use_class="true">
-      <color name="OK" red="0" green="255" blue="0">
+      <color name="LED-GREEN-OFF" red="60" green="100" blue="60">
       </color>
     </off_color>
     <on_color use_class="true">
-      <color name="MAJOR" red="255" green="0" blue="0">
+      <color name="LED-GREEN-ON" red="0" green="255" blue="0">
       </color>
     </on_color>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>Label_1</name>
-    <text>GOOD_BAD</text>
-    <y>270</y>
-    <width>120</width>
-    <font>
-      <font name="Comment" family="Liberation Sans" style="ITALIC" size="14.0">
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
       </font>
     </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <background_color use_class="true">
+      <color name="Button_Background" red="230" green="230" blue="230">
+      </color>
+    </background_color>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
   </widget>
-  <widget type="label" version="2.0.0">
-    <name>Label_2</name>
-    <text>GOOD_BAD_ERROR</text>
-    <y>340</y>
-    <width>120</width>
-    <font>
-      <font name="Comment" family="Liberation Sans" style="ITALIC" size="14.0">
-      </font>
-    </font>
-  </widget>
-  <widget type="multi_state_led" version="2.0.0">
-    <name>GOOD_BAD_ERROR</name>
-    <x>130</x>
-    <y>340</y>
-    <width use_class="true">50</width>
+  <widget type="action_button" version="3.0.0">
+    <name>Action Button</name>
+    <x>610</x>
+    <y>470</y>
+    <width>70</width>
     <height use_class="true">30</height>
-    <states use_class="true">
-      <state use_class="true">
-        <value use_class="true">0</value>
-        <label use_class="true">Good</label>
-        <color use_class="true">
-          <color name="OK" red="0" green="255" blue="0">
-          </color>
-        </color>
-      </state>
-      <state use_class="true">
-        <value use_class="true">1</value>
-        <label use_class="true">Bad</label>
-        <color use_class="true">
-          <color name="MINOR" red="255" green="128" blue="0">
-          </color>
-        </color>
-      </state>
-      <state use_class="true">
-        <value use_class="true">2</value>
-        <label use_class="true">Error</label>
-        <color use_class="true">
-          <color name="MAJOR" red="255" green="0" blue="0">
-          </color>
-        </color>
-      </state>
-    </states>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <background_color use_class="true">
+      <color name="Button_Background" red="230" green="230" blue="230">
+      </color>
+    </background_color>
+    <tooltip>$(actions)</tooltip>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED-Red</name>
+    <x>520</x>
+    <y>230</y>
+    <off_color use_class="true">
+      <color name="LED-RED-OFF" red="100" green="60" blue="60">
+      </color>
+    </off_color>
+    <on_color use_class="true">
+      <color name="LED-RED-ON" red="255" green="0" blue="0">
+      </color>
+    </on_color>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED-Green</name>
+    <x>566</x>
+    <y>230</y>
+    <off_color use_class="true">
+      <color name="LED-GREEN-OFF" red="60" green="100" blue="60">
+      </color>
+    </off_color>
+    <on_color use_class="true">
+      <color name="LED-GREEN-ON" red="0" green="255" blue="0">
+      </color>
+    </on_color>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED-Orange</name>
+    <x>612</x>
+    <y>230</y>
+    <off_color use_class="true">
+      <color name="LED-ORANGE-OFF" red="100" green="100" blue="60">
+      </color>
+    </off_color>
+    <on_color use_class="true">
+      <color name="LED-ORANGE-ON" red="255" green="210" blue="30">
+      </color>
+    </on_color>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Header</name>
+    <text>Header</text>
+    <x>20</x>
+    <y>70</y>
+    <width>760</width>
+    <height use_class="true">40</height>
+    <font use_class="true">
+      <font name="Header" family="Source Han Sans CN" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <background_color use_class="true">
+      <color name="Header_Background" red="200" green="150" blue="150">
+      </color>
+    </background_color>
+    <transparent use_class="true">false</transparent>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group</name>
+    <x>60</x>
+    <y>160</y>
+    <style use_class="true">3</style>
+    <transparent use_class="true">true</transparent>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED-Gray</name>
+    <x>660</x>
+    <y>230</y>
+    <off_color use_class="true">
+      <color red="204" green="204" blue="204">
+      </color>
+    </off_color>
+    <on_color use_class="true">
+      <color red="128" green="128" blue="128">
+      </color>
+    </on_color>
+    <font use_class="true">
+      <font name="Default" family="Source Han Sans CN" style="REGULAR" size="20.0">
+      </font>
+    </font>
+    <foreground_color use_class="true">
+      <color name="Text" red="5" green="5" blue="5">
+      </color>
+    </foreground_color>
+    <border_alarm_sensitive use_class="true">false</border_alarm_sensitive>
   </widget>
 </display>

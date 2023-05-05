@@ -63,8 +63,11 @@
   <target name="dist" depends="jfxarch, product" description="Pack for distribution">
     <zip destfile="${build}/phoebus-${version}-${jfxarch}.zip">
       <zipfileset dir="${build}" includes="**/*.jar" prefix="phoebus-${version}"/>
-      <zipfileset dir="." includes="settings.ini" fullpath="phoebus-${version}/settings.ini"/>
+      <zipfileset dir="." includes="phoebus.ini" fullpath="phoebus-${version}/settings.ini"/>
       <zipfileset dir="." includes="settings_template.ini" fullpath="phoebus-${version}/settings_template.ini"/>
+      <zipfileset dir="." includes="phoebus.ico" fullpath="phoebus-${version}/phoebus.ico"/>
+      <zipfileset dir="." includes="phoebus.png" fullpath="phoebus-${version}/phoebus.png"/>
+      <zipfileset dir="." includes="start_phoebus.vbs" fullpath="phoebus-${version}/start_phoebus.vbs"/>
       <zipfileset dir="." includes="phoebus.sh" fullpath="phoebus-${version}/phoebus.sh" filemode="755"/>
       <zipfileset dir="." includes="phoebus.bat" fullpath="phoebus-${version}/phoebus.bat"/>
       <zipfileset dir="." includes="phoebus.xml" fullpath="phoebus-${version}/phoebus.xml"/>

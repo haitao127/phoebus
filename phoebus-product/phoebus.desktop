@@ -2,4 +2,6 @@
 Type=Application
 Terminal=false
 Name=Phoebus
-Exec=~/bin/phoebus -resource %f
+StartupNotify=False
+Exec=java -jar /opt/phoebus-*/product-*.jar -settings phoebus.ini -server 4918
+Icon=/opt/phoebus-*/phoebus.png
