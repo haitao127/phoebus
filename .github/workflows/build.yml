@@ -17,4 +17,8 @@ jobs:
         java-version: '17'
         maven-version: '3.9.6'
     - name: Build
+<<<<<<< HEAD
       run: mvn --batch-mode install -DskipTests
+=======
+      run: mvn -DskipTests --batch-mode install
+>>>>>>> 07a2b3d51 (Update build.yml)
