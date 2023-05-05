@@ -18,39 +18,54 @@ INVALID = 255, 0, 255
 DISCONNECTED = 200, 0, 200, 200
 
 # Default color for text
-Text=0,0,0
+# Text=0,0,0
+Text_Light = 250, 250, 250
+Text_Dark = 5, 5, 5
+Text = 5, 5, 5
 
 # Default color for 'active' text that's being edited
 ActiveText=255, 255, 0
 
 # Display background
-Background = 255, 255, 255
+# Background = 255, 255, 255
+Background = 240, 240, 240
+Group_Background = 210, 210, 210
 
 # .. for widgets that read/write a value
-Read_Background = 240, 240, 240
-Write_Background = 128, 255, 255
+# Read_Background = 240, 240, 240
+# Write_Background = 128, 255, 255
+Read_Background = 230, 230, 230
+Write_Background = 230, 230, 230
 
 # .. for buttons
-Button_Background = 210, 210, 210
+# Button_Background = 210, 210, 210
+Button_Background = 230, 230, 230
 
 # ------- Examples for additional colors ----------------
 # Also show ideas for site-specific guidelines that
 # are required to make sense of the color names.
 
 # Styling
-Header_Background=77,77,77
-Header_ForeGround=255,255,255
+# Header_Background=77,77,77
+# Header_ForeGround=255,255,255
+Title_Background = 30, 115, 115
+Title_Foreground = 250, 250, 250
+Subtitle_Foreground = 250, 250, 250
+Header_Background = 200, 150, 150
+Header_Foreground = 5, 5, 5
 
 # Use alarm colors only when you mean to indicate an alarm.
 # Avoid using 'Red' which might suggest an alarm
 # just because you like the look of red.
 # STOP looks similar to red=MAJOR alarm, and is allowed
 # for 'STOP' type of buttons
-STOP = MAJOR
+# STOP = MAJOR
+STOP = 252, 13, 27
 
 # Attention looks similar to a MINOR alarm.
 # It is meant to draw attention
-Attention = 255,160,0
+# Attention = 255,160,0
+ATTENTION = 255,160,0
 
 # The colors for On/Off, Open/Close etc,.
 # "On" does not necessarily mean 'device is turned on', but
@@ -62,5 +77,13 @@ Attention = 255,160,0
 # For example, a limit switch indicator could use colors "Off" and "MAJOR":
 # Off when idle, MAJOR when the limit switch was hit and this is an abnormal situation
 # that requires attention.
-On = OK
-Off = 60,100,60
+# On = OK
+# Off = 60,100,60
+LED-GREEN-ON = 0, 255, 0
+LED-GREEN-OFF = 60, 100, 60
+LED-RED-ON = 255, 0, 0
+LED-RED-OFF = 100, 60, 60
+LED-ORANGE-ON = 255, 210, 30
+LED-ORANGE-OFF = 100, 100, 60
+LED-GRAY-ON = 128, 128, 128
+LED-GRAY-OFF = 204, 204, 204

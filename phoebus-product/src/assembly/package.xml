@@ -17,6 +17,10 @@
         <include>*.sh</include>
         <include>*.bat</include>
         <include>*.desktop</include>
+        <include>*.ini</include>
+        <include>*.ico</include>
+        <include>*.png</include>
+        <include>*.vbs</include>
       </includes>
     </fileSet>
     <fileSet>

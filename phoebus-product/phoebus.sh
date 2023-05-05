@@ -30,7 +30,7 @@ fi
 JAR=`echo ${TOP}/product-*.jar`
 
 # To get one instance, use server mode
-OPT="-server 4918"
+OPT="-settings phoebus.ini -server 4918"
 
 
 filter1="-help"
