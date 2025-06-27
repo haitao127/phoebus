@@ -35,9 +35,5 @@ echo on
 
 @REM CA_DISABLE_REPEATER=true: Don't start CA repeater (#494)
 @REM To get one instance, use server mode by adding `-server 4918`
-<<<<<<< HEAD
-@java -DCA_DISABLE_REPEATER=true -Dfile.encoding=UTF-8 -jar "%JAR%" %*
-=======
 @java -DCA_DISABLE_REPEATER=true -Dfile.encoding=UTF-8 -jar %JAR% -settings phoebus.ini -server 4918 %*
->>>>>>> 529ddcd5b (version 20230504)
 
