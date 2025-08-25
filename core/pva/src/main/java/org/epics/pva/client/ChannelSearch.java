@@ -101,19 +101,31 @@ class ChannelSearch
             // to handle it
         }
 
-        // Hash by channel name
+        // Searches are identified by CID because we might have the
+        // same channel name in different searches when we try to access
+        // the same channel with different field(...) qualifiers.
+        // One could try to optimize this by fetching "field()" (everything)
+        // and then picking the subelements in the client,
+        // but in case there's only a single PV for
+        //     pva://GigaBytePV/substruct/double_field
+        // we'd want to use "field(substruct.double_field)"
+        // and avoid fetching the complete structure.
+        // ... unless there is later a PV "pva://GigaBytePV",
+        // but we don't know, yet?
+
+        // Hash by CID
         @Override
         public int hashCode()
         {
-            return channel.getName().hashCode();
+            return channel.getCID();
         }
 
-        // Compare by channel name
+        // Compare by CID
         @Override
         public boolean equals(Object obj)
         {
             if (obj instanceof SearchedChannel other)
-                return other.channel.getName().equals(channel.getName());
+                return other.channel.getCID() == channel.getCID();
             return false;
         }
     }
@@ -470,7 +482,7 @@ class ChannelSearch
                     // Use 'any' reply address since reply will be via this TCP socket
                     final InetSocketAddress response_address = new InetSocketAddress(0);
 
-                    SearchRequest.encode(true, seq, channels, response_address, tls , buffer);
+                    SearchRequest.encode(true, true, seq, channels, response_address, tls , buffer);
                 };
                 tcp.submit(search_request);
             }
@@ -505,7 +517,7 @@ class ChannelSearch
         {
             send_buffer.clear();
             final InetSocketAddress response = udp.getResponseAddress(addr);
-            SearchRequest.encode(true, seq, channels, response, tls, send_buffer);
+            SearchRequest.encode(true, true, seq, channels, response, tls, send_buffer);
             send_buffer.flip();
             try
             {
@@ -523,7 +535,7 @@ class ChannelSearch
         {
             send_buffer.clear();
             final InetSocketAddress response = udp.getResponseAddress(addr);
-            SearchRequest.encode(false, seq, channels, response, tls, send_buffer);
+            SearchRequest.encode(false, true, seq, channels, response, tls, send_buffer);
             send_buffer.flip();
             try
             {
